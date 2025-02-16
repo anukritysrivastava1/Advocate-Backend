@@ -38,7 +38,7 @@ public class SignupRequest {
 	private String confirmPassword;
 
 	@NotBlank(message = "Phone number is required")
-	private String phoneNumber;
+	private String mobile;
 
 
 	

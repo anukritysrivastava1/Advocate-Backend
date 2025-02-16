@@ -30,7 +30,7 @@ public class AuthService {
 		newUser = new User();
 		newUser.setAddress(signupRequest.getAddress());
 		newUser.setEmail(signupRequest.getEmail());
-		newUser.setMobile(signupRequest.getPhoneNumber());
+		newUser.setMobile(signupRequest.getMobile());
 		newUser.setFirstName(signupRequest.getFirstName());
 		newUser.setLastName(signupRequest.getLastName());
 		newUser.setPassword(signupRequest.getPassword());
