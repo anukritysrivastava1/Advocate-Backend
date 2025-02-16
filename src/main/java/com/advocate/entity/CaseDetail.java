@@ -52,7 +52,6 @@ public class CaseDetail {
 
 	public CaseDetail() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public Long getId() {

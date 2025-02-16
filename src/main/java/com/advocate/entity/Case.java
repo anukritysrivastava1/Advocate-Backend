@@ -67,7 +67,6 @@ public class Case {
 
 	public Case() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public Long getId() {

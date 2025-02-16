@@ -11,23 +11,25 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.advocate.dto.SignupRequest;
 import com.advocate.entity.User;
-import com.advocate.service.UserService;
+import com.advocate.exception.EntityAlreadyExistsException;
+import com.advocate.service.AuthService;
+
 
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-	
-	@Autowired
-	private UserService userService;
+    
+    @Autowired
+    private AuthService authService;
 
-	
-	
-	//SignUp
+    
+    
+    //SignUp
     @PostMapping("/signup")
-    public ResponseEntity<String> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
-        String res = userService.signup(signupRequest);
+    public ResponseEntity<String> registerUser(@Valid @RequestBody SignupRequest signupRequest) throws EntityAlreadyExistsException {
+        String res = authService.signup(signupRequest);
         if (res.equals("User registered successfully!")) {
 			return ResponseEntity.ok(res);
 		} else {
@@ -39,7 +41,7 @@ public class AuthController {
     //Login
     @PostMapping("/login")
     public ResponseEntity<User> loginUser(@RequestParam String email, @RequestParam String password){
-    	User user = userService.login(email, password);
+    	User user = authService.login(email, password);
     	
     	if(user != null) {
     		return ResponseEntity.status(HttpStatus.OK).body(user);

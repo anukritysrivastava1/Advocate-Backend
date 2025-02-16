@@ -49,7 +49,6 @@ public class CaseDate {
 
 	public CaseDate() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public Long getId() {
