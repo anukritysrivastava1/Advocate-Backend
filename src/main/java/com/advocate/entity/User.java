@@ -1,8 +1,14 @@
 package com.advocate.entity;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import com.advocate.enums.Role;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -25,7 +31,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "first_name", nullable = false)
+    @Column(name = "first_name")
     private String firstName;
 
     @Column(name = "last_name")
@@ -38,30 +44,39 @@ public class User {
     private String email;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
+    @Column(name = "role", length = 10, nullable = false)
     private Role role;
 
     @Column(name = "address")
     private String address;
 
+    @Column(name = "password")
+    private String password;
+    
     @Column(name = "identity_no")
     private String identityNo;
 
     @Column(name = "vehicle_no")
     private String vehicleNo;
-
+    
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @Column(name = "created_at", nullable = false, updatable = false)
-    private String createdAt;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @Column(name = "updated_at", nullable = false)
-    private String updatedAt;
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
     @Column(name = "updated_by")
     private Long updatedBy;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Case> cases;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Client> clients;
 
@@ -126,6 +141,14 @@ public class User {
 		this.address = address;
 	}
 
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
 	public String getIdentityNo() {
 		return identityNo;
 	}
@@ -142,19 +165,19 @@ public class User {
 		this.vehicleNo = vehicleNo;
 	}
 
-	public String getCreatedAt() {
+	public LocalDateTime getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt(String createdAt) {
+	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
 	}
 
-	public String getUpdatedAt() {
+	public LocalDateTime getUpdatedAt() {
 		return updatedAt;
 	}
 
-	public void setUpdatedAt(String updatedAt) {
+	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
 	}
 
@@ -185,13 +208,13 @@ public class User {
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", mobile=" + mobile
-				+ ", email=" + email + ", role=" + role + ", address=" + address + ", identityNo=" + identityNo
+				+ ", email=" + email + ", role=" + role + ", address=" + address + ", password=" + password + ", identityNo=" + identityNo
 				+ ", vehicleNo=" + vehicleNo + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", updatedBy="
 				+ updatedBy + ", cases=" + cases + ", clients=" + clients + "]";
 	}
 
-	public User(Long id, String firstName, String lastName, String mobile, String email, Role role, String address,
-			String identityNo, String vehicleNo, String createdAt, String updatedAt, Long updatedBy, List<Case> cases,
+	public User(Long id, String firstName, String lastName, String mobile, String email, Role role, String address, String password,
+			String identityNo, String vehicleNo, LocalDateTime createdAt, LocalDateTime updatedAt, Long updatedBy, List<Case> cases,
 			List<Client> clients) {
 		super();
 		this.id = id;
@@ -201,6 +224,7 @@ public class User {
 		this.email = email;
 		this.role = role;
 		this.address = address;
+		this.password = password;
 		this.identityNo = identityNo;
 		this.vehicleNo = vehicleNo;
 		this.createdAt = createdAt;
