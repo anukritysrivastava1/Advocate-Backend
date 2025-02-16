@@ -19,72 +19,71 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "users")
 public class User {
 
-
-
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Column(name = "first_name")
-    private String firstName;
+	@Column(name = "first_name")
+	private String firstName;
 
-    @Column(name = "last_name")
-    private String lastName;
+	@Column(name = "last_name")
+	private String lastName;
 
-    @Column(name = "mobile")
-    private String mobile;
+	@Column(name = "mobile")
+	private String mobile;
 
-    @Column(name = "email")
-    private String email;
+	@Column(name = "email")
+	private String email;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role", length = 10, nullable = false)
-    private Role role;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "role", length = 10, nullable = false)
+	private Role role;
 
-    @Column(name = "address")
-    private String address;
+	@JsonIgnore
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Address address;
 
-    @Column(name = "password")
-    private String password;
-    
-    @Column(name = "identity_no")
-    private String identityNo;
+	@Column(name = "password")
+	private String password;
 
-    @Column(name = "vehicle_no")
-    private String vehicleNo;
-    
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    @Column(name = "created_at", nullable = false, updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
+	@Column(name = "identity_no")
+	private String identityNo;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    @Column(name = "updated_at", nullable = false)
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+	@Column(name = "vehicle_no")
+	private String vehicleNo;
 
-    @Column(name = "updated_by")
-    private Long updatedBy;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+	@Column(name = "created_at", nullable = false, updatable = false)
+	@CreationTimestamp
+	private LocalDateTime createdAt;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Case> cases;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+	@Column(name = "updated_at", nullable = false)
+	@UpdateTimestamp
+	private LocalDateTime updatedAt;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Client> clients;
+	@Column(name = "updated_by")
+	private Long updatedBy;
 
-    public User() {
+	@JsonIgnore
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Case> cases;
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Client> clients;
+
+	public User() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
-    
+
 	public Long getId() {
 		return id;
 	}
@@ -133,11 +132,11 @@ public class User {
 		this.role = role;
 	}
 
-	public String getAddress() {
+	public Address getAddress() {
 		return address;
 	}
 
-	public void setAddress(String address) {
+	public void setAddress(Address address) {
 		this.address = address;
 	}
 
@@ -208,13 +207,16 @@ public class User {
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", mobile=" + mobile
-				+ ", email=" + email + ", role=" + role + ", address=" + address + ", password=" + password + ", identityNo=" + identityNo
+				+ ", email=" + email + ", role=" + role + ", address=" + address + ", password=" + password
+				+ ", identityNo=" + identityNo
 				+ ", vehicleNo=" + vehicleNo + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", updatedBy="
 				+ updatedBy + ", cases=" + cases + ", clients=" + clients + "]";
 	}
 
-	public User(Long id, String firstName, String lastName, String mobile, String email, Role role, String address, String password,
-			String identityNo, String vehicleNo, LocalDateTime createdAt, LocalDateTime updatedAt, Long updatedBy, List<Case> cases,
+	public User(Long id, String firstName, String lastName, String mobile, String email, Role role, Address address,
+			String password,
+			String identityNo, String vehicleNo, LocalDateTime createdAt, LocalDateTime updatedAt, Long updatedBy,
+			List<Case> cases,
 			List<Client> clients) {
 		super();
 		this.id = id;
@@ -234,5 +236,4 @@ public class User {
 		this.clients = clients;
 	}
 
-  
 }
