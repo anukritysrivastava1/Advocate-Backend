@@ -1,6 +1,7 @@
 package com.advocate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.advocate.dto.SignupRequest;
 import com.advocate.entity.User;
@@ -11,6 +12,7 @@ import com.advocate.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
+@Service
 public class AuthService {
     
 
@@ -28,6 +30,7 @@ public class AuthService {
 		}
 		
 		newUser = new User();
+        System.out.println(signupRequest.getAddress());
 		newUser.setAddress(signupRequest.getAddress());
 		newUser.setEmail(signupRequest.getEmail());
 		newUser.setMobile(signupRequest.getMobile());

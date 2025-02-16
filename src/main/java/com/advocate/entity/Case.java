@@ -16,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -73,6 +74,13 @@ public class Case {
     @OneToMany(mappedBy = "caseEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Client> clients;
 
-	private String status;
+	private String status ;
+
+	@PrePersist // ✅ Automatically sets default before persisting
+    public void setDefaultStatus() {
+        if (this.status == null) {
+            this.status = "ACTIVE";
+        }
+    }
   
 }
