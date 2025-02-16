@@ -18,8 +18,10 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -55,7 +57,8 @@ public class User {
 	private Role role;
 
 	@JsonIgnore
-	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(cascade = CascadeType.ALL, optional = true) // Cascade ensures Address gets persisted with User
+	@JoinColumn(name = "address_id", referencedColumnName = "id", nullable = true)
 	private Address address;
 
 	@Column(name = "password")
@@ -88,6 +91,13 @@ public class User {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Client> clients;
 
-	private String status;
+	private String status ;
+
+	@PrePersist // ✅ Automatically sets default before persisting
+    public void setDefaultStatus() {
+        if (this.status == null) {
+            this.status = "ACTIVE";
+        }
+    }
 
 }

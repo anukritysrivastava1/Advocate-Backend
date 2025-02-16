@@ -26,11 +26,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(EntityAlreadyExistsException.class)
 	public ResponseEntity<ErrorMessage> entityAlreadyExistException(EntityAlreadyExistsException exception) {
 		
-		var errorMessage = new ErrorMessage(HttpStatus.NOT_FOUND, exception.getMessage());
+		var errorMessage = new ErrorMessage(HttpStatus.BAD_REQUEST, exception.getMessage());
 		
 		logger.error(exception.getMessage());
 		
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+		
+	}
+
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<ErrorMessage> illegalArgumentException(IllegalArgumentException exception) {
+		
+		var errorMessage = new ErrorMessage(HttpStatus.BAD_REQUEST, exception.getMessage());
+		
+		logger.error(exception.getMessage());
+		
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
 		
 	}
  
