@@ -43,9 +43,9 @@ public class UserController {
 	//Update User
 	@PutMapping("/")
 		public String updateUser(UpdateUserRequestDto updateUserRequestDto) {
-	    User updatedUser = UserService.updateUser(updateUserRequestDto);
+	    User updatedUser = userService.updateUser(updateUserRequestDto);
 
-        return 
+        return "user updated";
 	}
 	
 
