@@ -21,9 +21,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "users")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class User {
 
 	@Id
@@ -80,160 +88,6 @@ public class User {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Client> clients;
 
-	public User() {
-		super();
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public String getMobile() {
-		return mobile;
-	}
-
-	public void setMobile(String mobile) {
-		this.mobile = mobile;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public Role getRole() {
-		return role;
-	}
-
-	public void setRole(Role role) {
-		this.role = role;
-	}
-
-	public Address getAddress() {
-		return address;
-	}
-
-	public void setAddress(Address address) {
-		this.address = address;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getIdentityNo() {
-		return identityNo;
-	}
-
-	public void setIdentityNo(String identityNo) {
-		this.identityNo = identityNo;
-	}
-
-	public String getVehicleNo() {
-		return vehicleNo;
-	}
-
-	public void setVehicleNo(String vehicleNo) {
-		this.vehicleNo = vehicleNo;
-	}
-
-	public LocalDateTime getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(LocalDateTime createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public LocalDateTime getUpdatedAt() {
-		return updatedAt;
-	}
-
-	public void setUpdatedAt(LocalDateTime updatedAt) {
-		this.updatedAt = updatedAt;
-	}
-
-	public Long getUpdatedBy() {
-		return updatedBy;
-	}
-
-	public void setUpdatedBy(Long updatedBy) {
-		this.updatedBy = updatedBy;
-	}
-
-	public List<Case> getCases() {
-		return cases;
-	}
-
-	public void setCases(List<Case> cases) {
-		this.cases = cases;
-	}
-
-	public List<Client> getClients() {
-		return clients;
-	}
-
-	public void setClients(List<Client> clients) {
-		this.clients = clients;
-	}
-
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", mobile=" + mobile
-				+ ", email=" + email + ", role=" + role + ", address=" + address + ", password=" + password
-				+ ", identityNo=" + identityNo
-				+ ", vehicleNo=" + vehicleNo + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", updatedBy="
-				+ updatedBy + ", cases=" + cases + ", clients=" + clients + "]";
-	}
-
-	public User(Long id, String firstName, String lastName, String mobile, String email, Role role, Address address,
-			String password,
-			String identityNo, String vehicleNo, LocalDateTime createdAt, LocalDateTime updatedAt, Long updatedBy,
-			List<Case> cases,
-			List<Client> clients) {
-		super();
-		this.id = id;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.mobile = mobile;
-		this.email = email;
-		this.role = role;
-		this.address = address;
-		this.password = password;
-		this.identityNo = identityNo;
-		this.vehicleNo = vehicleNo;
-		this.createdAt = createdAt;
-		this.updatedAt = updatedAt;
-		this.updatedBy = updatedBy;
-		this.cases = cases;
-		this.clients = clients;
-	}
+	private String status;
 
 }

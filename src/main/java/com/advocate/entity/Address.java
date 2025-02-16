@@ -39,5 +39,7 @@ public class Address {
     @MapsId // Ensures no extra table is created, and uses the same ID as User
     @JoinColumn(name = "user_id")
     private User user;
+
+    private String status;
 }
 
