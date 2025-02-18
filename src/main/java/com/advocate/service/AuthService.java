@@ -21,7 +21,7 @@ public class AuthService {
 
 
     //Sign-up new user
-	public String signup(@Valid SignupRequest signupRequest) throws EntityAlreadyExistsException {
+	public User signup(@Valid SignupRequest signupRequest) throws EntityAlreadyExistsException {
 		User newUser = userRepository.findByEmail(signupRequest.getEmail());
 
 		if(newUser != null) {
@@ -41,7 +41,7 @@ public class AuthService {
 	    String roleType = signupRequest.getRole();
 	     
 	    if (roleType == null || roleType.trim().isEmpty()) {
-	        return "Error: Role cannot be empty!";
+	        throw new IllegalArgumentException("Error: Role cannot be empty!");
 	    }	    
 	    
 	    try {
@@ -49,13 +49,13 @@ public class AuthService {
 	        System.out.println(role);
 	        newUser.setRole(role);
 	    } catch (IllegalArgumentException e) {
-	        return "Error: Invalid role '" + roleType + "'. Allowed values: ADMIN, SUBADMIN, USER.";
+			throw new IllegalArgumentException("Error: Invalid role '" + roleType + "'. Allowed values: ADMIN, SUBADMIN, USER.");
 	    }
 	    
 		System.out.println(newUser);
 
-		userRepository.save(newUser);
-		return "User registered successfully!";
+		return userRepository.save(newUser);
+		
 	}
 	
 	//Login using email and password

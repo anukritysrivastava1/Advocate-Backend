@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.advocate.dto.CommonResponseDto;
 import com.advocate.dto.SignupRequest;
 import com.advocate.entity.User;
 import com.advocate.exception.EntityAlreadyExistsException;
@@ -28,25 +29,21 @@ public class AuthController {
     
     //SignUp
     @PostMapping("/signup")
-    public ResponseEntity<String> registerUser(@Valid @RequestBody SignupRequest signupRequest) throws EntityAlreadyExistsException {
-        String res = authService.signup(signupRequest);
-        if (res.equals("User registered successfully!")) {
-			return ResponseEntity.ok(res);
-		} else {
-			return ResponseEntity.status(400).body(res); // If user already exists
-		}
-    }
+	public ResponseEntity<CommonResponseDto<User>> add(@Valid @RequestBody SignupRequest signupRequest) throws EntityAlreadyExistsException{
+		var user = authService.signup(signupRequest);
+      
+		return ResponseEntity.ok(new CommonResponseDto<>("Users added successfully ",  HttpStatus.OK, user ));
+	
+	}
     
     
     //Login
     @PostMapping("/login")
-    public ResponseEntity<User> loginUser(@RequestParam String email, @RequestParam String password){
+    public ResponseEntity<CommonResponseDto<User>> loginUser(@RequestParam String email, @RequestParam String password){
     	User user = authService.login(email, password);
     	
-    	if(user != null) {
-    		return ResponseEntity.status(HttpStatus.OK).body(user);
-    	}
-    	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(user);
+        return ResponseEntity.ok(new CommonResponseDto<>("Users logged-in successfully ",  HttpStatus.OK, user ));
+	
     }
     
     

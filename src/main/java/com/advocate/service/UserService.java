@@ -1,7 +1,6 @@
 package com.advocate.service;
 
 import java.util.List;
-import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,7 @@ import com.advocate.exception.EntityAlreadyExistsException;
 import com.advocate.repository.UserRepository;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
+
 
 
 @Service
@@ -25,16 +24,11 @@ public class UserService {
 	private UserRepository userRepository;
 	
 	
-	//get
-	public String getUsers() {
-		
-		
-		return "A";
-	}
+
 	
 	
     //Add New user
-	public String addUser(@Valid SignupRequest signupRequest) throws EntityAlreadyExistsException {
+	public User addUser( SignupRequest signupRequest) throws EntityAlreadyExistsException {
 		User newUser = userRepository.findByEmail(signupRequest.getEmail());
 
 		if(newUser != null) {
@@ -49,11 +43,11 @@ public class UserService {
 		newUser.setFirstName(signupRequest.getFirstName());
 		newUser.setLastName(signupRequest.getLastName());
 		newUser.setPassword(signupRequest.getPassword());
-		
+		System.out.println(signupRequest);
 	    String roleType = signupRequest.getRole();
-	     
-	    if (roleType == null || roleType.trim().isEmpty()) {
-	        return "Error: Role cannot be empty!";
+	     System.out.println("Role is "+roleType);
+		if (roleType == null || roleType.trim().isEmpty()) {
+	        throw new IllegalArgumentException("Error: Role cannot be empty!");
 	    }	    
 	    
 	    try {
@@ -61,13 +55,12 @@ public class UserService {
 	        System.out.println(role);
 	        newUser.setRole(role);
 	    } catch (IllegalArgumentException e) {
-	        return "Error: Invalid role '" + roleType + "'. Allowed values: ADMIN, SUBADMIN, USER.";
+			throw new IllegalArgumentException("Error: Invalid role '" + roleType + "'. Allowed values: ADMIN, SUBADMIN, USER.");
 	    }
 	    
 		System.out.println(newUser);
 
-		userRepository.save(newUser);
-		return "User added successfully!";
+		return userRepository.save(newUser);
 	}
 
 
@@ -75,11 +68,11 @@ public class UserService {
 	
 	
 	
-    private String generateOtp() {
-        Random random = new Random();
-        int otp = 100000 + random.nextInt(900000); // Generate 6-digit OTP
-        return String.valueOf(otp);
-    }
+    // private String generateOtp() {
+    //     Random random = new Random();
+    //     int otp = 100000 + random.nextInt(900000); // Generate 6-digit OTP
+    //     return String.valueOf(otp);
+    // }
 
 	//Get all users by role
 	public List<User> getAllUsersByRole(String roleType) {

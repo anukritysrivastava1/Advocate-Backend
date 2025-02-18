@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,11 +18,9 @@ import com.advocate.dto.SignupRequest;
 import com.advocate.dto.UpdateUserRequestDto;
 import com.advocate.entity.User;
 import com.advocate.exception.EntityAlreadyExistsException;
-import com.advocate.service.AuthService;
 import com.advocate.service.UserService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import jakarta.validation.Valid;
+
 
 
 @RestController
@@ -31,26 +30,27 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
-	@Autowired
-	private AuthService authService;
+	
 	
 	//add
-	@PostMapping("/")
-	public ResponseEntity<String> add(@Valid @RequestBody SignupRequest signupRequest) throws EntityAlreadyExistsException{
-		String res = authService.signup(signupRequest);
-        if (res.equals("User registered successfully!")) {
-			return ResponseEntity.ok(res);
-		} else {
-			return ResponseEntity.status(400).body(res); // If user already exists
-		}	
+	@PostMapping("/add")
+	public ResponseEntity<CommonResponseDto<User>> add( @RequestBody SignupRequest signupRequest) throws EntityAlreadyExistsException{
+		System.out.println(signupRequest);
+		System.out.println("before service");
+		var user = userService.addUser(signupRequest);
+      
+		return ResponseEntity.ok(new CommonResponseDto<>("Users added successfully ",  HttpStatus.OK, user ));
+	
 	}
 
 	//Update User
-	@PutMapping("/")
-		public String updateUser(UpdateUserRequestDto updateUserRequestDto) {
+	@PutMapping("/update")
+		public ResponseEntity<CommonResponseDto<User>> updateUser(UpdateUserRequestDto updateUserRequestDto) {
 	    User updatedUser = userService.updateUser(updateUserRequestDto);
 
-        return "user updated";
+		 return ResponseEntity.ok(new CommonResponseDto<>("Users updated successfully ",  HttpStatus.OK, updatedUser ));
+
+        
 	}
 
 
