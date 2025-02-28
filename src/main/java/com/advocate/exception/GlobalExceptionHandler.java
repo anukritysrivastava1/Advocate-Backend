@@ -23,6 +23,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 
 	}
+
+	
 	@ExceptionHandler(EntityAlreadyExistsException.class)
 	public ResponseEntity<ErrorMessage> entityAlreadyExistException(EntityAlreadyExistsException exception) {
 		

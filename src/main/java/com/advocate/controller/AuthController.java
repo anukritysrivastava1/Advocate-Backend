@@ -14,7 +14,8 @@ import com.advocate.dto.SignupRequest;
 import com.advocate.entity.User;
 import com.advocate.exception.EntityAlreadyExistsException;
 import com.advocate.service.AuthService;
-
+import com.advocate.service.EmailService;
+import com.advocate.service.UserService;
 
 import jakarta.validation.Valid;
 
@@ -24,6 +25,12 @@ public class AuthController {
     
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private UserService userService;
 
     
     
@@ -54,4 +61,34 @@ public class AuthController {
     
     
     //LoginWithOTPTeamMem
+    @PostMapping("/sendOTP")
+	public ResponseEntity<String> sendOTPMail(@RequestParam("email") String recipientEmail, @RequestParam("type") String type) {
+		boolean isUserExist = userService.userExistByEmail(recipientEmail);
+		
+		if((type.equals("forget-password")&&isUserExist)||(type.equals("login")&&isUserExist)||(type.equals("sign-up")&&!isUserExist)){
+			
+				
+			var otp = emailService.sendOtpNotification(recipientEmail);
+			
+			if (otp != null) {
+				return ResponseEntity.ok(otp);
+			}
+			}
+		else if((type.equals("forget-password")&& !isUserExist)) {
+			
+			return ResponseEntity.badRequest().body("User does not exist with the given email");
+		}
+        else if((type.equals("login")&& !isUserExist)) {
+			
+			return ResponseEntity.badRequest().body("User does not exist with the given email");
+		}
+		else if((type.equals("sign-up")&&isUserExist)) {
+			
+			return ResponseEntity.badRequest().body("User already exist with given email");
+		}
+		return ResponseEntity.badRequest().body("OTP does not sent due to error");
+		
+	}
+
+
 }

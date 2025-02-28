@@ -103,7 +103,6 @@ public class UserService {
 		return  userRepository.findByStatus(status);
 	}
 
-	
 	//update
 	public User updateUser(UpdateUserRequestDto updateUserRequestDto){
 		User user = userRepository.findById(updateUserRequestDto.getId()).orElseThrow(() ->  new EntityNotFoundException("User not found with given id"));
@@ -123,17 +122,23 @@ public class UserService {
 		return (object2 == null || object2.toString().equals(""))?object1: object2;
 	}
 	
-	
-	
-	
+	//Find if userEmail already exist
+	public boolean userExistByEmail(String email) {
+		System.out.println(userRepository.findByEmail(email));
+		return userRepository.findByEmail(email)!=null;
+			
+		}
+		
+
+
+		
     // private String generateOtp() {
     //     Random random = new Random();
     //     int otp = 100000 + random.nextInt(900000); // Generate 6-digit OTP
     //     return String.valueOf(otp);
     // }
 
-	
-	
+
 	//delete
 	
 	
