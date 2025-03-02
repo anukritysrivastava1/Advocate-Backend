@@ -1,18 +1,7 @@
 package com.advocate.entity;
 
 import com.advocate.enums.CaseOrderStatus;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -37,12 +26,24 @@ public class CaseDate {
     @Column(name = "case_date", nullable = false)
     private String caseDate;
 
+    @Column(name = "hearing_type")
+    private String hearingType; // e.g., First Hearing, Final Hearing, etc.
+
+    @Column(name = "hearing_outcome")
+    private String hearingOutcome; // e.g., Adjourned, Judgment Delivered
+
+    @Column(name = "next_hearing_date")
+    private String nextHearingDate;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "`order`", nullable = false)
     private CaseOrderStatus order;
 
     @Column(name = "payment", nullable = false)
     private double payment;
+
+    @Column(name = "remarks", length = 1000)
+    private String remarks; // Additional notes
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private String createdAt;
@@ -56,13 +57,12 @@ public class CaseDate {
     @Column(name = "updated_by")
     private Long updatedBy;
 
-	private String status ;
+    private String status;
 
-	@PrePersist // ✅ Automatically sets default before persisting
+    @PrePersist
     public void setDefaultStatus() {
         if (this.status == null) {
             this.status = "ACTIVE";
         }
     }
-   
 }
