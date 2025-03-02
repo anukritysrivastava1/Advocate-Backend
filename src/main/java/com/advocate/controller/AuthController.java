@@ -9,8 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.advocate.dto.CommonResponseDto;
-import com.advocate.dto.SignupRequest;
+import com.advocate.dto.request.LoginRequest;
+import com.advocate.dto.request.SignupRequest;
+import com.advocate.dto.response.CommonResponseDto;
 import com.advocate.entity.User;
 import com.advocate.exception.EntityAlreadyExistsException;
 import com.advocate.service.AuthService;
@@ -46,8 +47,8 @@ public class AuthController {
     
     //Login
     @PostMapping("/login")
-    public ResponseEntity<CommonResponseDto<User>> loginUser(@RequestParam String email, @RequestParam String password){
-    	User user = authService.login(email, password);
+    public ResponseEntity<CommonResponseDto<User>> loginUser(@RequestBody LoginRequest loginRequest) {
+    	User user = authService.login(loginRequest.getEmail(), loginRequest.getPassword(), loginRequest.getRole());
     	
         return ResponseEntity.ok(new CommonResponseDto<>("Users logged-in successfully ",  HttpStatus.OK, user ));
 	
