@@ -14,60 +14,60 @@ import jakarta.validation.Valid;
 
 @Service
 public class AuthService {
-    
 
-    @Autowired
+	@Autowired
 	private UserRepository userRepository;
 
-
-    //Sign-up new user
+	// Sign-up new user
 	public User signup(@Valid SignupRequest signupRequest) throws EntityAlreadyExistsException {
 		User newUser = userRepository.findByEmail(signupRequest.getEmail());
 
-		if(newUser != null) {
+		if (newUser != null) {
 			throw new EntityAlreadyExistsException("User already exists with given email !");
-			
+
 		}
-		
+
 		newUser = new User();
-        System.out.println(signupRequest.getAddress());
+		System.out.println(signupRequest.getAddress());
 		newUser.setAddress(signupRequest.getAddress());
 		newUser.setEmail(signupRequest.getEmail());
 		newUser.setMobile(signupRequest.getMobile());
 		newUser.setFirstName(signupRequest.getFirstName());
 		newUser.setLastName(signupRequest.getLastName());
 		newUser.setPassword(signupRequest.getPassword());
-		
-	    String roleType = signupRequest.getRole();
-	     
-	    if (roleType == null || roleType.trim().isEmpty()) {
-	        throw new IllegalArgumentException("Error: Role cannot be empty!");
-	    }	    
-	    
-	    try {
-	        Role role = Role.valueOf(roleType.trim().toUpperCase()); 
-	        System.out.println(role);
-	        newUser.setRole(role);
-	    } catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException("Error: Invalid role '" + roleType + "'. Allowed values: ADMIN, SUBADMIN, USER.");
-	    }
-	    
+
+		String roleType = signupRequest.getRole();
+
+		if (roleType == null || roleType.trim().isEmpty()) {
+			throw new IllegalArgumentException("Error: Role cannot be empty!");
+		}
+
+		try {
+			Role role = Role.valueOf(roleType.trim().toUpperCase());
+			System.out.println(role);
+			newUser.setRole(role);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException(
+					"Error: Invalid role '" + roleType + "'. Allowed values: ADMIN, SUBADMIN, USER.");
+		}
+
 		System.out.println(newUser);
 
 		return userRepository.save(newUser);
-		
+
 	}
-	
-	//Login using email and password
-	public User login(String email, String password, String role) {
-		
+
+	// Login using email and password
+	public User login(String email, String password) {
+
 		User user = userRepository.findByEmail(email);
-		
-		if(user != null) {
-			if(user.getPassword().equals(password) && user.getRole().toString().equals(role)) {;
+
+		if (user != null) {
+			if (user.getPassword().equals(password))
+				;
 			return user;
 		}
-		
+
 		throw new EntityNotFoundException("User not found with given email !");
 	}
 }

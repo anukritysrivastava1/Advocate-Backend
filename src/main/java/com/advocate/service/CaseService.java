@@ -3,7 +3,8 @@ package com.advocate.service;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.advocate.dto.CaseRequestDto;
+
+import com.advocate.dto.request.CaseRequestDto;
 import com.advocate.entity.Case;
 import com.advocate.entity.Client;
 import com.advocate.entity.User;

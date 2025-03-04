@@ -1,4 +1,4 @@
-package com.advocate.dto;
+package com.advocate.dto.request;
 
 import com.advocate.enums.CaseOrderStatus;
 import com.advocate.enums.CaseStatus;

@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -16,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.advocate.dto.CaseRequestDto;
-import com.advocate.dto.CommonResponseDto;
+import com.advocate.dto.response.CommonResponseDto;
+import com.advocate.dto.request.CaseRequestDto;
 import com.advocate.entity.Case;
 import com.advocate.exception.EntityAlreadyExistsException;
 import com.advocate.service.CaseService;
