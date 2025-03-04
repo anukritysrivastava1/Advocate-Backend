@@ -32,13 +32,13 @@ public class ClientController {
 
     // add
     @PostMapping("/add")
-    public ResponseEntity<CommonResponseDto<Client>> add(@RequestBody SignupRequest signupRequest)
+    public ResponseEntity<CommonResponseDto<Client>> addClient(@RequestBody SignupRequest signupRequest)
             throws EntityAlreadyExistsException {
         System.out.println(signupRequest);
         System.out.println("before service");
-        // var user = clientService.addClient(signupRequest);
+        var client = clientService.addClient(signupRequest);
 
-        return ResponseEntity.ok(new CommonResponseDto<>("Users added successfully ", HttpStatus.OK, null));
+        return ResponseEntity.ok(new CommonResponseDto<>("Users added successfully ", HttpStatus.OK, client));
 
     }
 

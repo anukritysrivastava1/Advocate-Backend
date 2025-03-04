@@ -1,29 +1,37 @@
 package com.advocate.dto;
 
-
+import com.advocate.enums.CaseOrderStatus;
 import com.advocate.enums.CaseStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@ToString
 public class CaseRequestDto {
 
-    private Long userId; 
 
+    private Long caseId;
+    private Long clientId;
+    private Long userId; // Added userId since Case entity has a User reference
     private String caseNo;
-    private String caseType; // Criminal, Civil, Family, etc.
+    private String caseType;
     private String courtName;
     private String judgeName;
     private String section;
     private String versus;
     private String caseFileDate;
-    private CaseStatus caseStatus; // Ongoing, Closed, etc.
-    private String hearingDate; // Next hearing date
+    private CaseStatus caseStatus;
+    private String presentDate; // Added missing presentDate
+    private String lastDate; // Added missing lastDate
+    private String hearingDate;
     private String caseDescription;
-    private String priority; // High, Medium, Low
-    
-    private String status; // Default: ACTIVE
+    private CaseOrderStatus caseOrderStatus;
+    private String priority;
+    private String remarks; // Added missing remarks
+    private String caseOutcome; // Added missing caseOutcome
+    private String status; // Added missing status field
 }
