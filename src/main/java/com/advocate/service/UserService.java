@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.advocate.dto.SignupRequest;
-import com.advocate.dto.UpdateUserRequestDto;
+import com.advocate.dto.request.SignupRequest;
+import com.advocate.dto.request.UpdateUserRequestDto;
 import com.advocate.entity.Address;
 import com.advocate.entity.User;
 import com.advocate.enums.Role;

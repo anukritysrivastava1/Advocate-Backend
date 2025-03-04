@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.advocate.dto.CommonResponseDto;
-import com.advocate.dto.SignupRequest;
-import com.advocate.dto.UpdateClientRequestDto;
+import com.advocate.dto.request.SignupRequest;
+import com.advocate.dto.request.UpdateClientRequestDto;
+import com.advocate.dto.response.CommonResponseDto;
 import com.advocate.entity.Client;
 import com.advocate.exception.EntityAlreadyExistsException;
 import com.advocate.service.ClientService;

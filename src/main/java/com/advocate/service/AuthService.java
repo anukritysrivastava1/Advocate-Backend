@@ -3,7 +3,7 @@ package com.advocate.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.advocate.dto.SignupRequest;
+import com.advocate.dto.request.SignupRequest;
 import com.advocate.entity.User;
 import com.advocate.enums.Role;
 import com.advocate.exception.EntityAlreadyExistsException;
@@ -59,12 +59,12 @@ public class AuthService {
 	}
 	
 	//Login using email and password
-	public User login(String email, String password) {
+	public User login(String email, String password, String role) {
 		
 		User user = userRepository.findByEmail(email);
 		
 		if(user != null) {
-			if(user.getPassword().equals(password));
+			if(user.getPassword().equals(password) && user.getRole().toString().equals(role)) {;
 			return user;
 		}
 		

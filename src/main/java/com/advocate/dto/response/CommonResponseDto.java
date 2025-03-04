@@ -1,4 +1,4 @@
-package com.advocate.dto;
+package com.advocate.dto.response;
 
 import org.springframework.http.HttpStatus;
 
