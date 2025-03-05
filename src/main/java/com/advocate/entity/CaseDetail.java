@@ -1,20 +1,18 @@
 package com.advocate.entity;
 
 import com.advocate.enums.CaseOrderStatus;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "case_details")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class CaseDetail {
 
     @Id
@@ -35,8 +33,23 @@ public class CaseDetail {
     @Column(name = "payment", nullable = false)
     private double payment;
 
+    @Column(name = "document_type")
+    private String documentType; // e.g., FIR, Judgment, Petition
+
     @Column(name = "files")
-    private String files;
+    private String files; // File path or URL
+
+    @Column(name = "uploaded_by")
+    private Long uploadedBy; // ID of the person who uploaded the file
+
+    @Column(name = "review_status")
+    private String reviewStatus; // Pending, Reviewed, Rejected
+
+    @Column(name = "document_description", length = 2000)
+    private String documentDescription; // Notes on the document
+
+    @Column(name = "case_progress", length = 2000)
+    private String caseProgress; // Updates about case progress
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private String createdAt;
@@ -50,112 +63,12 @@ public class CaseDetail {
     @Column(name = "updated_by")
     private Long updatedBy;
 
-	public CaseDetail() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    private String status;
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Case getCaseEntity() {
-		return caseEntity;
-	}
-
-	public void setCaseEntity(Case caseEntity) {
-		this.caseEntity = caseEntity;
-	}
-
-	public String getCaseDate() {
-		return caseDate;
-	}
-
-	public void setCaseDate(String caseDate) {
-		this.caseDate = caseDate;
-	}
-
-	public CaseOrderStatus getOrder() {
-		return order;
-	}
-
-	public void setOrder(CaseOrderStatus order) {
-		this.order = order;
-	}
-
-	public double getPayment() {
-		return payment;
-	}
-
-	public void setPayment(double payment) {
-		this.payment = payment;
-	}
-
-	public String getFiles() {
-		return files;
-	}
-
-	public void setFiles(String files) {
-		this.files = files;
-	}
-
-	public String getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(String createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public String getUpdatedAt() {
-		return updatedAt;
-	}
-
-	public void setUpdatedAt(String updatedAt) {
-		this.updatedAt = updatedAt;
-	}
-
-	public Long getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(Long createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public Long getUpdatedBy() {
-		return updatedBy;
-	}
-
-	public void setUpdatedBy(Long updatedBy) {
-		this.updatedBy = updatedBy;
-	}
-
-	public CaseDetail(Long id, Case caseEntity, String caseDate, CaseOrderStatus order, double payment, String files,
-			String createdAt, String updatedAt, Long createdBy, Long updatedBy) {
-		super();
-		this.id = id;
-		this.caseEntity = caseEntity;
-		this.caseDate = caseDate;
-		this.order = order;
-		this.payment = payment;
-		this.files = files;
-		this.createdAt = createdAt;
-		this.updatedAt = updatedAt;
-		this.createdBy = createdBy;
-		this.updatedBy = updatedBy;
-	}
-
-	@Override
-	public String toString() {
-		return "CaseDetail [id=" + id + ", caseEntity=" + caseEntity + ", caseDate=" + caseDate + ", order=" + order
-				+ ", payment=" + payment + ", files=" + files + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt
-				+ ", createdBy=" + createdBy + ", updatedBy=" + updatedBy + "]";
-	}
-
-    
+    @PrePersist
+    public void setDefaultStatus() {
+        if (this.status == null) {
+            this.status = "ACTIVE";
+        }
+    }
 }
