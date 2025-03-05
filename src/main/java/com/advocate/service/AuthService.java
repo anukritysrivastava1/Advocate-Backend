@@ -57,6 +57,22 @@ public class AuthService {
 
 	}
 
+	// Login for Admin
+	public User loginAdmin(String email, String password) {
+
+		User user = userRepository.findByEmailAndRole(email, Role.ADMIN);
+    
+		if (user != null) {
+			if (user.getPassword().equals(password)) {
+				System.out.println("Role: " + user.getRole());
+				return user;
+		} 		throw new EntityNotFoundException("Wrong password entered");
+
+		}
+		throw new EntityNotFoundException("Admin not found with given email!");
+	
+}
+
 	// Login using email and password
 	public User login(String email, String password) {
 

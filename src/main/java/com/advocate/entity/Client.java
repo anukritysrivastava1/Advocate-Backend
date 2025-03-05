@@ -82,7 +82,7 @@ public class Client {
 	private String status;
 
 	
-@PrePersist // ✅ Automatically sets default before persisting
+@PrePersist 
     public void setDefaultStatus() {
         if (this.status == null) {
             this.status = "ACTIVE";

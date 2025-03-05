@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.advocate.dto.request.SignupRequest;
+import com.advocate.dto.request.ClientRequestDto;
 import com.advocate.dto.request.UpdateClientRequestDto;
 import com.advocate.entity.Address;
 import com.advocate.entity.Client;
@@ -22,8 +22,8 @@ public class ClientService {
     private ClientRepository clientRepository;
 
     // Add Clients
-    public Client addClient(SignupRequest signupRequest) throws EntityAlreadyExistsException {
-        Client newClient = clientRepository.findByEmail(signupRequest.getEmail());
+    public Client addClient(ClientRequestDto clientRequestDto) throws EntityAlreadyExistsException {
+        Client newClient = clientRepository.findByEmail(clientRequestDto.getEmail());
 
         if (newClient != null) {
             throw new EntityAlreadyExistsException("User already exists with given email !");
@@ -31,14 +31,14 @@ public class ClientService {
         }
 
         newClient = new Client();
-        newClient.setAddress(signupRequest.getAddress());
-        newClient.setEmail(signupRequest.getEmail());
-        newClient.setMobile(signupRequest.getMobile());
-        newClient.setFirstName(signupRequest.getFirstName());
-        newClient.setLastName(signupRequest.getLastName());
-        newClient.setPassword(signupRequest.getPassword());
-        System.out.println(signupRequest);
-        String roleType = signupRequest.getRole();
+        newClient.setAddress(clientRequestDto.getAddress());
+        newClient.setEmail(clientRequestDto.getEmail());
+        newClient.setMobile(clientRequestDto.getMobile());
+        newClient.setFirstName(clientRequestDto.getFirstName());
+        newClient.setLastName(clientRequestDto.getLastName());
+        newClient.setPassword(clientRequestDto.getPassword());
+        System.out.println(clientRequestDto);
+        String roleType = clientRequestDto.getRole();
         System.out.println("Role is " + roleType);
         if (roleType == null || roleType.trim().isEmpty()) {
             throw new IllegalArgumentException("Error: Role cannot be empty!");
@@ -61,7 +61,7 @@ public class ClientService {
     // Update Clients
     public Client updateClient(UpdateClientRequestDto updateClientRequestDto) {
         Client client = clientRepository.findById(updateClientRequestDto.getId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found with given id"));
+                .orElseThrow(() -> new EntityNotFoundException("Client not found with given id"));
 
         client.setAddress(
                 (Address) checkAndUpdateValueIfPresent(client.getAddress(), updateClientRequestDto.getAddress()));
@@ -99,7 +99,7 @@ public class ClientService {
         clientRepository.findById(id)
                 .ifPresentOrElse(clientRepository::delete,
                         () -> {
-                            throw new EntityNotFoundException("User not found with given id");
+                            throw new EntityNotFoundException("Client not found with given id");
                         });
 
     }

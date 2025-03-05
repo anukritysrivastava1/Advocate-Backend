@@ -22,13 +22,13 @@ import com.advocate.exception.EntityAlreadyExistsException;
 import com.advocate.service.CaseService;
 
 @RestController
-@RequestMapping("api/case")
+@RequestMapping("api/cases")
 public class CaseController {
 
     @Autowired
     private CaseService caseService;
 
-    @PostMapping("/addCase")
+    @PostMapping("/")
     public ResponseEntity<CommonResponseDto<Case>> addCase(@RequestBody CaseRequestDto caseRequestDto)
             throws EntityAlreadyExistsException {
                 var cases = caseService.addCase(caseRequestDto);
@@ -36,13 +36,20 @@ public class CaseController {
 
     }
 
-    @PutMapping("/updateCase")
+    @PutMapping("/")
     public ResponseEntity<CommonResponseDto<Case>> updateCase(@RequestBody CaseRequestDto caseRequestDto){
 
         Case updatedCase = caseService.updateCase(caseRequestDto);
 
         return ResponseEntity.ok(new CommonResponseDto<>("Case updated successfully ", HttpStatus.OK, updatedCase));
 
+    }
+
+    @GetMapping("/allDates")
+    public ResponseEntity<CommonResponseDto<List<String>>> allDatesByCaseId(@RequestParam Long caseId){
+
+        List<String> allDates = caseService.getAllDates(caseId);
+        return ResponseEntity.ok(new CommonResponseDto<>("All Dates for Case Id: "+ caseId, HttpStatus.OK, allDates));
     }
 
     @GetMapping("/allCases")
@@ -81,7 +88,7 @@ public class CaseController {
 
     }
 
-    @DeleteMapping("/deleteCase/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<CommonResponseDto<Case>> deleteCaseById(@PathVariable Long id){
         caseService.deleteCaseById(id);
         return ResponseEntity.ok(new CommonResponseDto<>("Case deleted successfully. ", HttpStatus.OK, null));

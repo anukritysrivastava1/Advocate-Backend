@@ -44,6 +44,11 @@ public class CaseService {
         return caseRepository.findByPresentDateAfter(date);
     }
 
+    public List<String> getAllDates(Long caseId){
+        return caseRepository.findCaseDates(caseId);
+    }
+
+
     public Case addCase(CaseRequestDto caseRequestDto) throws EntityAlreadyExistsException {
 
         if (caseRequestDto.getCaseId() != null && caseRepository.existsById(caseRequestDto.getCaseId())) {

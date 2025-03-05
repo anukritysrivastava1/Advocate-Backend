@@ -139,7 +139,15 @@ public class UserService {
     // }
 
 
-	//delete
+	//Delete Admin 
+	public void deleteAdminById(Long id) {
+        userRepository.findById(id)
+                .ifPresentOrElse(userRepository::delete,
+                        () -> {
+                            throw new EntityNotFoundException("Admin not found with given id");
+                        });
+
+    }
 	
 	
 

@@ -27,10 +27,10 @@ public class CaseDate {
     private String caseDate;
 
     @Column(name = "hearing_type")
-    private String hearingType; // e.g., First Hearing, Final Hearing, etc.
+    private String hearingType; 
 
     @Column(name = "hearing_outcome")
-    private String hearingOutcome; // e.g., Adjourned, Judgment Delivered
+    private String hearingOutcome; 
 
     @Column(name = "next_hearing_date")
     private String nextHearingDate;
@@ -43,7 +43,7 @@ public class CaseDate {
     private double payment;
 
     @Column(name = "remarks", length = 1000)
-    private String remarks; // Additional notes
+    private String remarks; 
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private String createdAt;
