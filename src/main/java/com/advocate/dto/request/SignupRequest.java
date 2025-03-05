@@ -1,6 +1,7 @@
-package com.advocate.dto;
+package com.advocate.dto.request;
 
 import com.advocate.entity.Address;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -38,7 +39,7 @@ public class SignupRequest {
 	private String confirmPassword;
 
 	@NotBlank(message = "Phone number is required")
-	private String phoneNumber;
+	private String mobile;
 
 
 	
@@ -46,6 +47,7 @@ public class SignupRequest {
 	@NotBlank(message = "Role is required")
 	private String role; // Ensure this field is included in the request
 
+	@JsonInclude(JsonInclude.Include.NON_NULL) // Ignore null fields in JSON
 	private Address address; // Ensure this field is included in the request
 
 	

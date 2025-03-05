@@ -1,22 +1,9 @@
 package com.advocate.entity;
 
 import java.util.List;
-
 import com.advocate.enums.CaseOrderStatus;
 import com.advocate.enums.CaseStatus;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -41,6 +28,15 @@ public class Case {
     @Column(name = "case_no", nullable = false)
     private String caseNo;
 
+    @Column(name = "case_type")
+    private String caseType; // Criminal, Civil, Family, etc.
+
+    @Column(name = "court_name")
+    private String courtName;
+
+    @Column(name = "judge_name")
+    private String judgeName;
+
     @Column(name = "section")
     private String section;
 
@@ -60,9 +56,24 @@ public class Case {
     @Column(name = "last_date")
     private String lastDate;
 
+    @Column(name = "hearing_date")
+    private String hearingDate; // Next hearing date
+
+    @Column(name = "case_description", length = 2000)
+    private String caseDescription;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "case_order_status", nullable = false)
     private CaseOrderStatus caseOrderStatus;
+
+    @Column(name = "priority")
+    private String priority; // High, Medium, Low
+
+    @Column(name = "remarks", length = 1000)
+    private String remarks;
+
+    @Column(name = "case_outcome")
+    private String caseOutcome; // Verdict or case result
 
     @OneToMany(mappedBy = "caseEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CaseDate> caseDates;
@@ -73,6 +84,12 @@ public class Case {
     @OneToMany(mappedBy = "caseEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Client> clients;
 
-	private String status;
-  
+    private String status;
+
+    @PrePersist
+    public void setDefaultStatus() {
+        if (this.status == null) {
+            this.status = "ACTIVE";
+        }
+    }
 }

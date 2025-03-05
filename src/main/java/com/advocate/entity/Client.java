@@ -1,6 +1,8 @@
 package com.advocate.entity;
 import com.advocate.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,6 +12,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,11 +33,11 @@ public class Client {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = true)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "case_id", nullable = false)
+    @JoinColumn(name = "case_id", nullable = true)
     private Case caseEntity;
 
     @Column(name = "first_name", nullable = false)
@@ -48,12 +52,17 @@ public class Client {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "password")
+	private String password;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private Role role;
 
-    @Column(name = "address")
-    private String address;
+    @JsonIgnore
+	@OneToOne(cascade = CascadeType.ALL, optional = true) // Cascade ensures Address gets persisted with User
+	@JoinColumn(name = "address_id", referencedColumnName = "id", nullable = true)
+	private Address address;
 
     @Column(name = "identity_no")
     private String identityNo;
@@ -61,10 +70,10 @@ public class Client {
     @Column(name = "vehicle_no")
     private String vehicleNo;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", updatable = false)
     private String createdAt;
 
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at")
     private String updatedAt;
 
     @Column(name = "updated_by")
@@ -73,6 +82,11 @@ public class Client {
 	private String status;
 
 	
-
+@PrePersist 
+    public void setDefaultStatus() {
+        if (this.status == null) {
+            this.status = "ACTIVE";
+        }
+    }
    
 }

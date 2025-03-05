@@ -1,17 +1,7 @@
 package com.advocate.entity;
 
 import com.advocate.enums.CaseOrderStatus;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -43,8 +33,23 @@ public class CaseDetail {
     @Column(name = "payment", nullable = false)
     private double payment;
 
+    @Column(name = "document_type")
+    private String documentType; // e.g., FIR, Judgment, Petition
+
     @Column(name = "files")
-    private String files;
+    private String files; // File path or URL
+
+    @Column(name = "uploaded_by")
+    private Long uploadedBy; // ID of the person who uploaded the file
+
+    @Column(name = "review_status")
+    private String reviewStatus; // Pending, Reviewed, Rejected
+
+    @Column(name = "document_description", length = 2000)
+    private String documentDescription; // Notes on the document
+
+    @Column(name = "case_progress", length = 2000)
+    private String caseProgress; // Updates about case progress
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private String createdAt;
@@ -58,6 +63,12 @@ public class CaseDetail {
     @Column(name = "updated_by")
     private Long updatedBy;
 
-	private String status;
-    
+    private String status;
+
+    @PrePersist
+    public void setDefaultStatus() {
+        if (this.status == null) {
+            this.status = "ACTIVE";
+        }
+    }
 }
