@@ -1,4 +1,4 @@
-package com.advocate.dto;
+package com.advocate.dto.request;
 
 import com.advocate.entity.Address;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -39,7 +39,7 @@ public class SignupRequest {
 	private String confirmPassword;
 
 	@NotBlank(message = "Phone number is required")
-	private String phoneNumber;
+	private String mobile;
 
 
 	
