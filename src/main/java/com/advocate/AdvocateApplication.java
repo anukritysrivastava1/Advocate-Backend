@@ -5,8 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import io.github.cdimascio.dotenv.Dotenv;
-
 @SpringBootApplication
 public class AdvocateApplication {
 
@@ -15,8 +13,8 @@ public class AdvocateApplication {
 	public static void main(String[] args) {
 
 		// Load environment variables from .env file
-		Dotenv dotenv = Dotenv.configure().load();
-		dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
+		// Dotenv dotenv = Dotenv.configure().load();
+		// dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
 
 		SpringApplication.run(AdvocateApplication.class, args);
 		logger.info("Advocate Application Started....");
