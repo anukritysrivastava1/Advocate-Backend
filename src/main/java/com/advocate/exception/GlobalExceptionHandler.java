@@ -1,5 +1,6 @@
 package com.advocate.exception;
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -46,5 +47,29 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
 		
 	}
+
+		
+	@ExceptionHandler(RuntimeException.class)
+	public ResponseEntity<ErrorMessage> runtimeException(RuntimeException exception) {
+		
+		var errorMessage = new ErrorMessage(HttpStatus.BAD_REQUEST, exception.getMessage());
+		
+		logger.error(exception.getMessage());
+		
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+		
+	}
+
+	@ExceptionHandler(BadRequestException.class)
+	public ResponseEntity<ErrorMessage> badRequestException(BadRequestException exception) {
+		
+		var errorMessage = new ErrorMessage(HttpStatus.BAD_REQUEST, exception.getMessage());
+		
+		logger.error(exception.getMessage());
+		
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+		
+	}
+
  
 }
