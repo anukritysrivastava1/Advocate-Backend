@@ -84,20 +84,22 @@ public class UserController {
 
 	}
 
-	 @GetMapping("/{userId}/profile-picture")
+	
+    @GetMapping("/{userId}/profile-picture")
     public ResponseEntity<Resource> getProfilePicture(@PathVariable Long userId) {
+        Resource profilePic = userService.getProfilePic(userId);
 
-		Resource pic = userService.getProfilePic(userId);
+        if (profilePic == null) {
+            return ResponseEntity.notFound().build();
+        }
 
-		if (pic == null) {
-			return ResponseEntity.notFound().build();
-		} else {
-			return ResponseEntity.ok()
-			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "prof-pic" + "\"")
-			.body(pic);
-			
-		}
-        
+        String contentType = userService.getProfilePicContentType(userId);
+        String filename = userService.getProfilePicFilename(userId);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .contentType(org.springframework.http.MediaType.parseMediaType(contentType))
+                .body(profilePic);
     }
 
 }

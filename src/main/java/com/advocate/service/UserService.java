@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.mail.Multipart;
 
@@ -190,18 +192,61 @@ public class UserService {
 	}
 
 	public Resource getProfilePic(Long userId) {
-		try {
-			Path filePath = Paths.get(BASE_DIR + "userId-" + userId + "/prof-pic.jpg");
-			Resource resource = new UrlResource(filePath.toUri());
+        try {
+            Path userDir = Paths.get(BASE_DIR + "userId-" + userId + "/");
 
-			if (resource.exists() || resource.isReadable()) {
-				return resource;
-			} else {
-				return null;
-			}
-		} catch (Exception e) {
-			throw new RuntimeException("Unimplemented method 'getProfilePic'");
-		}
-	}
+            try (Stream<Path> files = Files.list(userDir)) {
+                Optional<Path> profilePic = files
+                        .filter(Files::isRegularFile)
+                        .filter(path -> path.getFileName().toString().startsWith("prof-pic"))
+                        .findFirst();
+
+                if (profilePic.isPresent()) {
+                    Resource resource = new UrlResource(profilePic.get().toUri());
+                    if (resource.exists() && resource.isReadable()) {
+                        return resource;
+                    }
+                }
+            }
+            return null;
+        } catch (IOException e) {
+            throw new RuntimeException("Error fetching profile picture for userId: " + userId, e);
+        }
+    }
+
+    public String getProfilePicContentType(Long userId) {
+        try {
+            Path userDir = Paths.get(BASE_DIR + "userId-" + userId + "/");
+            try (Stream<Path> files = Files.list(userDir)) {
+                Optional<Path> profilePic = files
+                        .filter(Files::isRegularFile)
+                        .filter(path -> path.getFileName().toString().startsWith("prof-pic"))
+                        .findFirst();
+
+                if (profilePic.isPresent()) {
+                    return Files.probeContentType(profilePic.get());
+                }
+            }
+            return "application/octet-stream";
+        } catch (IOException e) {
+            throw new RuntimeException("Error determining content type for userId: " + userId, e);
+        }
+    }
+
+    public String getProfilePicFilename(Long userId) {
+        try {
+            Path userDir = Paths.get(BASE_DIR + "userId-" + userId + "/");
+            try (Stream<Path> files = Files.list(userDir)) {
+                Optional<Path> profilePic = files
+                        .filter(Files::isRegularFile)
+                        .filter(path -> path.getFileName().toString().startsWith("prof-pic"))
+                        .findFirst();
+
+                return profilePic.map(path -> path.getFileName().toString()).orElse("profile-pic.jpg");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error getting profile picture filename for userId: " + userId, e);
+        }
+    }
 
 }
