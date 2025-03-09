@@ -6,12 +6,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import javax.mail.Multipart;
+
 import org.apache.coyote.BadRequestException;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.advocate.dto.request.ProfilePicRequestDto;
 import com.advocate.dto.request.SignupRequest;
@@ -150,7 +153,7 @@ public class UserService {
 
 	}
 
-	public User addProfilePic(Long userId, ProfilePicRequestDto pic) {
+	public User addProfilePic(Long userId, MultipartFile  pic) {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -158,13 +161,13 @@ public class UserService {
 			String userDir = BASE_DIR + "userId-" + userId + "/";
 			Files.createDirectories(Paths.get(userDir));
 
-			String fileExtension = getImageExtension(pic.getProfilePic());
+			String fileExtension = getImageExtension(pic.getBytes());
 			if (fileExtension == null) {
 				throw new BadRequestException("Invalid image format");
 			}
 
 			String filePath = userDir + "prof-pic." + fileExtension;
-			Files.write(Paths.get(filePath), pic.getProfilePic());
+			Files.write(Paths.get(filePath), pic.getBytes());
 
 			user.setProfilePicPath(filePath);
 			return userRepository.save(user);

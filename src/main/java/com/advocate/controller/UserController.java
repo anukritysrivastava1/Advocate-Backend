@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.advocate.dto.request.ProfilePicRequestDto;
 import com.advocate.dto.request.SignupRequest;
@@ -77,8 +78,8 @@ public class UserController {
 
 	// add profile pic
 	@PostMapping("/{userId}/addProfilePic")
-	public ResponseEntity<CommonResponseDto<User>> addProfilePic(@RequestBody ProfilePicRequestDto pic, @PathVariable Long userId) {
-		User user = userService.addProfilePic(userId, pic);
+	public ResponseEntity<CommonResponseDto<User>> addProfilePic(@RequestParam("file") MultipartFile file, @PathVariable Long userId) {
+		User user = userService.addProfilePic(userId, file);
 		return ResponseEntity.ok(new CommonResponseDto<>("Profile pic added successfully ", HttpStatus.OK, user));
 
 	}
