@@ -93,6 +93,9 @@ public class User {
 
 	private String status ;
 
+	@Column(name = "profile_pic_path")
+    private String profilePicPath;
+
 	@PrePersist // ✅ Automatically sets default before persisting
     public void setDefaultStatus() {
         if (this.status == null) {

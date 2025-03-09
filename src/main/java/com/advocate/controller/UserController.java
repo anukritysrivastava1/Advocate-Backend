@@ -3,9 +3,12 @@ package com.advocate.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.advocate.dto.request.ProfilePicRequestDto;
 import com.advocate.dto.request.SignupRequest;
 import com.advocate.dto.request.UpdateUserRequestDto;
 import com.advocate.dto.response.CommonResponseDto;
@@ -70,5 +74,29 @@ public class UserController {
 		return ResponseEntity.ok(new CommonResponseDto<>("Users found with status: " + status, HttpStatus.OK, users));
 
 	}
+
+	// add profile pic
+	@PostMapping("/{userId}/addProfilePic")
+	public ResponseEntity<CommonResponseDto<User>> addProfilePic(@RequestBody ProfilePicRequestDto pic, @PathVariable Long userId) {
+		User user = userService.addProfilePic(userId, pic);
+		return ResponseEntity.ok(new CommonResponseDto<>("Profile pic added successfully ", HttpStatus.OK, user));
+
+	}
+
+	 @GetMapping("/{userId}/profile-picture")
+    public ResponseEntity<Resource> getProfilePicture(@PathVariable Long userId) {
+
+		Resource pic = userService.getProfilePic(userId);
+
+		if (pic == null) {
+			return ResponseEntity.notFound().build();
+		} else {
+			return ResponseEntity.ok()
+			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "prof-pic" + "\"")
+			.body(pic);
+			
+		}
+        
+    }
 
 }
