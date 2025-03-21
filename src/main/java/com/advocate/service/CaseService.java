@@ -160,13 +160,13 @@ public class CaseService {
         return caseRepository.findByCaseNoContainingIgnoreCase(caseNo);
     }
 
-    public List<Case> searchByClientName(String clientName) {
-        return caseRepository.findByClientName(clientName);
-    }
+    // public List<Case> searchByClientName(String clientName) {
+    //     return caseRepository.findByClientName(clientName);
+    // }
 
-    public List<Case> searchByClientCode(String clientCode) {
-        return caseRepository.findByClientCode(clientCode);
-    }
+    // public List<Case> searchByClientCode(String clientCode) {
+    //     return caseRepository.findByClientCode(clientCode);
+    // }
 
     public List<Case> searchByCaseStatus(CaseStatus caseStatus) {
         return caseRepository.findByCaseStatus(caseStatus);

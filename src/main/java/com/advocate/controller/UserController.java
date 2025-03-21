@@ -102,4 +102,11 @@ public class UserController {
                 .body(profilePic);
     }
 
+	@PutMapping("/{userId}/updateProfilePic")
+public ResponseEntity<CommonResponseDto<User>> updateProfilePic(@RequestParam("file") MultipartFile file, @PathVariable Long userId) {
+    User user = userService.updateProfilePic(userId, file);
+    return ResponseEntity.ok(new CommonResponseDto<>("Profile pic updated successfully.", HttpStatus.OK, user));
+}
+
+
 }

@@ -28,12 +28,11 @@ public interface CaseRepository extends JpaRepository<Case, Long> {
     // Search by Case Status
     List<Case> findByCaseStatus(CaseStatus caseStatus);
 
-    // Search by Client Name
-    @Query("SELECT c FROM Case c JOIN c.clients cl WHERE LOWER(cl.name) LIKE LOWER(CONCAT('%', :clientName, '%'))")
-    List<Case> findByClientName(@Param("clientName") String clientName);
+    // // Search by Client Name
+    // @Query("SELECT c FROM Case c JOIN c.clients cl WHERE LOWER(cl.name) LIKE LOWER(CONCAT('%', :clientName, '%'))")
+    // List<Case> findByClientName(@Param("clientName") String clientName);
 
-    // Search by Client Code
-    @Query("SELECT c FROM Case c JOIN c.clients cl WHERE cl.clientCode = :clientCode")
-    List<Case> findByClientCode(@Param("clientCode") String clientCode);
+    // @Query("SELECT c FROM Case c JOIN c.clients cl WHERE cl.clientCode = :clientCode")
+    // List<Case> findByClientCode(@Param("clientCode") String clientCode);
 
 }

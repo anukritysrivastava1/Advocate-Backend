@@ -109,17 +109,17 @@ public class CaseController {
         return ResponseEntity.ok(new CommonResponseDto<>("Cases found by case number", HttpStatus.OK, cases));
     }
 
-    @GetMapping("/search/clientName")
-    public ResponseEntity<CommonResponseDto<List<Case>>> searchByClientName(@RequestParam String clientName) {
-        List<Case> cases = caseService.searchByClientName(clientName);
-        return ResponseEntity.ok(new CommonResponseDto<>("Cases found by client name", HttpStatus.OK, cases));
-    }
+    // @GetMapping("/search/clientName")
+    // public ResponseEntity<CommonResponseDto<List<Case>>> searchByClientName(@RequestParam String clientName) {
+    //     List<Case> cases = caseService.searchByClientName(clientName);
+    //     return ResponseEntity.ok(new CommonResponseDto<>("Cases found by client name", HttpStatus.OK, cases));
+    // }
 
-    @GetMapping("/search/clientCode")
-    public ResponseEntity<CommonResponseDto<List<Case>>> searchByClientCode(@RequestParam String clientCode) {
-        List<Case> cases = caseService.searchByClientCode(clientCode);
-        return ResponseEntity.ok(new CommonResponseDto<>("Cases found by client code", HttpStatus.OK, cases));
-    }
+    // @GetMapping("/search/clientCode")
+    // public ResponseEntity<CommonResponseDto<List<Case>>> searchByClientCode(@RequestParam String clientCode) {
+    //     List<Case> cases = caseService.searchByClientCode(clientCode);
+    //     return ResponseEntity.ok(new CommonResponseDto<>("Cases found by client code", HttpStatus.OK, cases));
+    // }
 
     @GetMapping("/search/status")
     public ResponseEntity<CommonResponseDto<List<Case>>> searchByCaseStatus(@RequestParam CaseStatus caseStatus) {

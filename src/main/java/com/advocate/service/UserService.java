@@ -248,4 +248,34 @@ public class UserService {
         }
     }
 
+
+	public User updateProfilePic(Long userId, MultipartFile pic) {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new RuntimeException("User not found"));
+	
+		// Ensure the user already has a profile picture
+		if (user.getProfilePicPath() == null) {
+			throw new IllegalStateException("No profile picture found. Use addProfilePic to upload one first.");
+		}
+	
+		try {
+			// Get the existing file path
+			Path existingPicPath = Paths.get(user.getProfilePicPath());
+	
+			// Validate the new image format
+			String fileExtension = getImageExtension(pic.getBytes());
+			if (fileExtension == null) {
+				throw new BadRequestException("Invalid image format");
+			}
+	
+			// Overwrite the existing profile picture
+			Files.write(existingPicPath, pic.getBytes());
+	
+			return userRepository.save(user);
+		} catch (IOException e) {
+			throw new RuntimeException("Error updating profile picture: " + e.getMessage());
+		}
+	}
+	
+
 }
