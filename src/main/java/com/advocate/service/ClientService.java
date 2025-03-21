@@ -96,12 +96,15 @@ public class ClientService {
 
     // Delete Clients
     public void deleteClientById(Long id) {
-        clientRepository.findById(id)
-                .ifPresentOrElse(clientRepository::delete,
-                        () -> {
-                            throw new EntityNotFoundException("Client not found with given id");
-                        });
-
+        Client clientEntity = clientRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Client not found with the given ID."));
+    
+        if ("INACTIVE".equalsIgnoreCase(clientEntity.getStatus())) {
+            throw new IllegalStateException("Case is already deleted.");
+        }
+    
+        clientEntity.setStatus("INACTIVE"); 
+        clientRepository.save(clientEntity);
     }
 
 }

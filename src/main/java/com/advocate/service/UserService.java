@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import javax.mail.Multipart;
 
 import org.apache.coyote.BadRequestException;
 import org.apache.tika.Tika;
@@ -18,7 +17,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.advocate.dto.request.ProfilePicRequestDto;
+
 import com.advocate.dto.request.SignupRequest;
 import com.advocate.dto.request.UpdateUserRequestDto;
 import com.advocate.entity.Address;

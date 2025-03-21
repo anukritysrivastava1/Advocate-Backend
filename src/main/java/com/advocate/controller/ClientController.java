@@ -61,10 +61,8 @@ public class ClientController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<CommonResponseDto<Client>> deleteClientById(@PathVariable Long id){
-
+    public ResponseEntity<CommonResponseDto<Void>> deleteCaseById(@PathVariable Long id) {
         clientService.deleteClientById(id);
-        return ResponseEntity.ok(new CommonResponseDto<>("Users deleted successfully. ",  HttpStatus.OK, null));
-
+        return ResponseEntity.ok(new CommonResponseDto<>("Client deleted successfully.", HttpStatus.OK, null));
     }
 }
