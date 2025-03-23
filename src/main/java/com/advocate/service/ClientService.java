@@ -1,9 +1,20 @@
 package com.advocate.service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
+import org.apache.coyote.BadRequestException;
+import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.advocate.dto.request.ClientRequestDto;
 import com.advocate.dto.request.UpdateClientRequestDto;
@@ -20,6 +31,8 @@ public class ClientService {
 
     @Autowired
     private ClientRepository clientRepository;
+
+    private static final String BASE_DIR = "resources/";
 
     // Add Clients
     public Client addClient(ClientRequestDto clientRequestDto) throws EntityAlreadyExistsException {
@@ -96,12 +109,163 @@ public class ClientService {
 
     // Delete Clients
     public void deleteClientById(Long id) {
-        clientRepository.findById(id)
-                .ifPresentOrElse(clientRepository::delete,
-                        () -> {
-                            throw new EntityNotFoundException("Client not found with given id");
-                        });
+        Client clientEntity = clientRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Client not found with the given ID."));
 
+        if ("INACTIVE".equalsIgnoreCase(clientEntity.getStatus())) {
+            throw new IllegalStateException("Case is already deleted.");
+        }
+
+        clientEntity.setStatus("INACTIVE");
+        clientRepository.save(clientEntity);
+    }
+
+    // Add Profile Pic
+    public Client addProfilePic(Long clientId, MultipartFile pic) {
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new RuntimeException("Client not found"));
+
+        try {
+            String userDir = BASE_DIR + "clientId-" + clientId + "/";
+            Files.createDirectories(Paths.get(userDir));
+
+            String fileExtension = getImageExtension(pic.getBytes());
+            if (fileExtension == null) {
+                throw new BadRequestException("Invalid image format");
+            }
+
+            String filePath = userDir + "prof-pic." + fileExtension;
+            Files.write(Paths.get(filePath), pic.getBytes());
+
+            client.setProfilePicPath(filePath);
+            return clientRepository.save(client);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Error saving profile picture: " + e.getMessage());
+        }
+    }
+
+    private String getImageExtension(byte[] fileData) throws IOException {
+        Tika tika = new Tika();
+        String mimeType = tika.detect(fileData);
+
+        return switch (mimeType) {
+            case "image/jpeg" -> "jpg";
+            case "image/png" -> "png";
+            case "image/gif" -> "gif";
+            default -> null;
+        };
+    }
+
+    public Resource getProfilePic(Long clientId) {
+        try {
+            Path userDir = Paths.get(BASE_DIR + "clientId-" + clientId + "/");
+
+            try (Stream<Path> files = Files.list(userDir)) {
+                Optional<Path> profilePic = files
+                        .filter(Files::isRegularFile)
+                        .filter(path -> path.getFileName().toString().startsWith("prof-pic"))
+                        .findFirst();
+
+                if (profilePic.isPresent()) {
+                    Resource resource = new UrlResource(profilePic.get().toUri());
+                    if (resource.exists() && resource.isReadable()) {
+                        return resource;
+                    }
+                }
+            }
+            return null;
+        } catch (IOException e) {
+            throw new RuntimeException("Error fetching profile picture for clientId: " + clientId, e);
+        }
+    }
+
+    public String getProfilePicContentType(Long clientId) {
+        try {
+            Path userDir = Paths.get(BASE_DIR + "clientId-" + clientId + "/");
+            try (Stream<Path> files = Files.list(userDir)) {
+                Optional<Path> profilePic = files
+                        .filter(Files::isRegularFile)
+                        .filter(path -> path.getFileName().toString().startsWith("prof-pic"))
+                        .findFirst();
+
+                if (profilePic.isPresent()) {
+                    return Files.probeContentType(profilePic.get());
+                }
+            }
+            return "application/octet-stream";
+        } catch (IOException e) {
+            throw new RuntimeException("Error determining content type for clientId: " + clientId, e);
+        }
+    }
+
+    public String getProfilePicFilename(Long clientId) {
+        try {
+            Path userDir = Paths.get(BASE_DIR + "clientId-" + clientId + "/");
+            try (Stream<Path> files = Files.list(userDir)) {
+                Optional<Path> profilePic = files
+                        .filter(Files::isRegularFile)
+                        .filter(path -> path.getFileName().toString().startsWith("prof-pic"))
+                        .findFirst();
+
+                return profilePic.map(path -> path.getFileName().toString()).orElse("profile-pic.jpg");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error getting profile picture filename for clientId: " + clientId, e);
+        }
+    }
+
+    // Update Profile Pic
+    public Client updateProfilePic(Long clientId, MultipartFile pic) {
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new RuntimeException("Client not found"));
+
+        if (client.getProfilePicPath() == null) {
+            throw new IllegalStateException("No profile picture found. Use addProfilePic to upload one first.");
+        }
+
+        try {
+            Path existingPicPath = Paths.get(client.getProfilePicPath());
+            String newFileExtension = getImageExtension(pic.getBytes());
+            if (newFileExtension == null) {
+                throw new BadRequestException("Invalid image format");
+            }
+
+            Path directory = existingPicPath.getParent();
+            String newFileName = "prof-pic." + newFileExtension;
+            Path newFilePath = directory.resolve(newFileName);
+
+            if (!existingPicPath.equals(newFilePath)) {
+                Files.deleteIfExists(existingPicPath);
+            }
+
+            Files.write(newFilePath, pic.getBytes());
+            client.setProfilePicPath(newFilePath.toString());
+
+            return clientRepository.save(client);
+        } catch (IOException e) {
+            throw new RuntimeException("Error updating profile picture: " + e.getMessage());
+        }
+    }
+
+    // Delete Profile Pic
+    public Client deleteProfilePic(Long clientId) {
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new RuntimeException("Client not found"));
+
+        if (client.getProfilePicPath() == null) {
+            throw new IllegalStateException("No profile picture found to delete.");
+        }
+
+        try {
+            Path picPath = Paths.get(client.getProfilePicPath());
+            Files.deleteIfExists(picPath);
+            client.setProfilePicPath(null);
+
+            return clientRepository.save(client);
+        } catch (IOException e) {
+            throw new RuntimeException("Error deleting profile picture: " + e.getMessage());
+        }
     }
 
 }

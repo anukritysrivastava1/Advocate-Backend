@@ -48,7 +48,6 @@ public class CaseService {
         return caseRepository.findCaseDates(caseId);
     }
 
-
     public Case addCase(CaseRequestDto caseRequestDto) throws EntityAlreadyExistsException {
 
         if (caseRequestDto.getCaseId() != null && caseRepository.existsById(caseRequestDto.getCaseId())) {
@@ -139,10 +138,26 @@ public class CaseService {
     }
 
     public void deleteCaseById(Long id) {
-        caseRepository.findById(id)
-                .ifPresentOrElse(caseRepository::delete,
-                        () -> {
-                            throw new EntityNotFoundException("Case not found with this given Case Id.");
-                        });
+        Case caseEntity = caseRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Case not found with the given ID."));
+    
+        if ("INACTIVE".equalsIgnoreCase(caseEntity.getStatus())) {
+            throw new IllegalStateException("Case is already deleted.");
+        }
+    
+        caseEntity.setStatus("INACTIVE"); 
+        caseRepository.save(caseEntity);
+    }
+    
+    public List<Case> searchByDate(String date) {
+        return caseRepository.findByPresentDate(date);
+    }
+
+    public List<Case> searchByCaseNo(String caseNo) {
+        return caseRepository.findByCaseNoContainingIgnoreCase(caseNo);
+    }
+    
+    public List<Case> searchByCaseStatus(CaseStatus caseStatus) {
+        return caseRepository.findByCaseStatus(caseStatus);
     }
 }

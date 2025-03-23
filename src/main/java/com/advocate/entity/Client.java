@@ -81,6 +81,8 @@ public class Client {
 
 	private String status;
 
+    @Column(name = "profile_pic_path")
+    private String profilePicPath;
 	
 @PrePersist 
     public void setDefaultStatus() {
