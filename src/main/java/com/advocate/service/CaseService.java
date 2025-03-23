@@ -48,7 +48,6 @@ public class CaseService {
         return caseRepository.findCaseDates(caseId);
     }
 
-
     public Case addCase(CaseRequestDto caseRequestDto) throws EntityAlreadyExistsException {
 
         if (caseRequestDto.getCaseId() != null && caseRepository.existsById(caseRequestDto.getCaseId())) {
@@ -150,8 +149,6 @@ public class CaseService {
         caseRepository.save(caseEntity);
     }
     
-
-
     public List<Case> searchByDate(String date) {
         return caseRepository.findByPresentDate(date);
     }
@@ -159,15 +156,7 @@ public class CaseService {
     public List<Case> searchByCaseNo(String caseNo) {
         return caseRepository.findByCaseNoContainingIgnoreCase(caseNo);
     }
-
-    // public List<Case> searchByClientName(String clientName) {
-    //     return caseRepository.findByClientName(clientName);
-    // }
-
-    // public List<Case> searchByClientCode(String clientCode) {
-    //     return caseRepository.findByClientCode(clientCode);
-    // }
-
+    
     public List<Case> searchByCaseStatus(CaseStatus caseStatus) {
         return caseRepository.findByCaseStatus(caseStatus);
     }

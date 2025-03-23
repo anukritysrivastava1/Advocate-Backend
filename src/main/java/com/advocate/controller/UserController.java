@@ -7,6 +7,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 
 import com.advocate.dto.request.SignupRequest;
 import com.advocate.dto.request.UpdateUserRequestDto;
@@ -33,7 +33,7 @@ public class UserController {
 	private UserService userService;
 
 	// add
-	@PostMapping("/add")
+	@PostMapping("/")
 	public ResponseEntity<CommonResponseDto<User>> add(@RequestBody SignupRequest signupRequest)
 			throws EntityAlreadyExistsException {
 		System.out.println(signupRequest);
@@ -45,7 +45,7 @@ public class UserController {
 	}
 
 	// Update User
-	@PutMapping("/update")
+	@PutMapping("/")
 	public ResponseEntity<CommonResponseDto<User>> updateUser(UpdateUserRequestDto updateUserRequestDto) {
 		User updatedUser = userService.updateUser(updateUserRequestDto);
 
@@ -78,35 +78,41 @@ public class UserController {
 
 	// add profile pic
 	@PostMapping("/{userId}/addProfilePic")
-	public ResponseEntity<CommonResponseDto<User>> addProfilePic(@RequestParam("file") MultipartFile file, @PathVariable Long userId) {
+	public ResponseEntity<CommonResponseDto<User>> addProfilePic(@RequestParam("file") MultipartFile file,
+			@PathVariable Long userId) {
 		User user = userService.addProfilePic(userId, file);
 		return ResponseEntity.ok(new CommonResponseDto<>("Profile pic added successfully ", HttpStatus.OK, user));
 
 	}
 
-	
-    @GetMapping("/{userId}/profile-picture")
-    public ResponseEntity<Resource> getProfilePicture(@PathVariable Long userId) {
-        Resource profilePic = userService.getProfilePic(userId);
+	@GetMapping("/{userId}/profile-picture")
+	public ResponseEntity<Resource> getProfilePicture(@PathVariable Long userId) {
+		Resource profilePic = userService.getProfilePic(userId);
 
-        if (profilePic == null) {
-            return ResponseEntity.notFound().build();
-        }
+		if (profilePic == null) {
+			return ResponseEntity.notFound().build();
+		}
 
-        String contentType = userService.getProfilePicContentType(userId);
-        String filename = userService.getProfilePicFilename(userId);
+		String contentType = userService.getProfilePicContentType(userId);
+		String filename = userService.getProfilePicFilename(userId);
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
-                .contentType(org.springframework.http.MediaType.parseMediaType(contentType))
-                .body(profilePic);
-    }
+		return ResponseEntity.ok()
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+				.contentType(org.springframework.http.MediaType.parseMediaType(contentType))
+				.body(profilePic);
+	}
 
 	@PutMapping("/{userId}/updateProfilePic")
-public ResponseEntity<CommonResponseDto<User>> updateProfilePic(@RequestParam("file") MultipartFile file, @PathVariable Long userId) {
-    User user = userService.updateProfilePic(userId, file);
-    return ResponseEntity.ok(new CommonResponseDto<>("Profile pic updated successfully.", HttpStatus.OK, user));
-}
+	public ResponseEntity<CommonResponseDto<User>> updateProfilePic(@RequestParam("file") MultipartFile file,
+			@PathVariable Long userId) {
+		User user = userService.updateProfilePic(userId, file);
+		return ResponseEntity.ok(new CommonResponseDto<>("Profile pic updated successfully.", HttpStatus.OK, user));
+	}
 
+	@DeleteMapping("/{userId}/deleteProfilePic")
+	public ResponseEntity<CommonResponseDto<User>> deleteProfilePic(@PathVariable Long userId) {
+		User user = userService.deleteProfilePic(userId);
+		return ResponseEntity.ok(new CommonResponseDto<>("Profile pic deleted successfully.", HttpStatus.OK, user));
+	}
 
 }

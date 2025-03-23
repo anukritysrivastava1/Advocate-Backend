@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-
 import org.apache.coyote.BadRequestException;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 
 import com.advocate.dto.request.SignupRequest;
 import com.advocate.dto.request.UpdateUserRequestDto;
@@ -72,12 +70,6 @@ public class UserService {
 
 		return userRepository.save(newUser);
 	}
-
-	// private String generateOtp() {
-	// Random random = new Random();
-	// int otp = 100000 + random.nextInt(900000); // Generate 6-digit OTP
-	// return String.valueOf(otp);
-	// }
 
 	// Get all users by role
 	public List<User> getAllUsersByRole(String roleType) {
@@ -138,12 +130,6 @@ public class UserService {
 
 	}
 
-	// private String generateOtp() {
-	// Random random = new Random();
-	// int otp = 100000 + random.nextInt(900000); // Generate 6-digit OTP
-	// return String.valueOf(otp);
-	// }
-
 	// Delete Admin
 	public void deleteAdminById(Long id) {
 		userRepository.findById(id)
@@ -154,7 +140,8 @@ public class UserService {
 
 	}
 
-	public User addProfilePic(Long userId, MultipartFile  pic) {
+	// Add Profile Pic
+	public User addProfilePic(Long userId, MultipartFile pic) {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -191,91 +178,110 @@ public class UserService {
 	}
 
 	public Resource getProfilePic(Long userId) {
-        try {
-            Path userDir = Paths.get(BASE_DIR + "userId-" + userId + "/");
+		try {
+			Path userDir = Paths.get(BASE_DIR + "userId-" + userId + "/");
 
-            try (Stream<Path> files = Files.list(userDir)) {
-                Optional<Path> profilePic = files
-                        .filter(Files::isRegularFile)
-                        .filter(path -> path.getFileName().toString().startsWith("prof-pic"))
-                        .findFirst();
+			try (Stream<Path> files = Files.list(userDir)) {
+				Optional<Path> profilePic = files
+						.filter(Files::isRegularFile)
+						.filter(path -> path.getFileName().toString().startsWith("prof-pic"))
+						.findFirst();
 
-                if (profilePic.isPresent()) {
-                    Resource resource = new UrlResource(profilePic.get().toUri());
-                    if (resource.exists() && resource.isReadable()) {
-                        return resource;
-                    }
-                }
-            }
-            return null;
-        } catch (IOException e) {
-            throw new RuntimeException("Error fetching profile picture for userId: " + userId, e);
-        }
-    }
+				if (profilePic.isPresent()) {
+					Resource resource = new UrlResource(profilePic.get().toUri());
+					if (resource.exists() && resource.isReadable()) {
+						return resource;
+					}
+				}
+			}
+			return null;
+		} catch (IOException e) {
+			throw new RuntimeException("Error fetching profile picture for userId: " + userId, e);
+		}
+	}
 
-    public String getProfilePicContentType(Long userId) {
-        try {
-            Path userDir = Paths.get(BASE_DIR + "userId-" + userId + "/");
-            try (Stream<Path> files = Files.list(userDir)) {
-                Optional<Path> profilePic = files
-                        .filter(Files::isRegularFile)
-                        .filter(path -> path.getFileName().toString().startsWith("prof-pic"))
-                        .findFirst();
+	public String getProfilePicContentType(Long userId) {
+		try {
+			Path userDir = Paths.get(BASE_DIR + "userId-" + userId + "/");
+			try (Stream<Path> files = Files.list(userDir)) {
+				Optional<Path> profilePic = files
+						.filter(Files::isRegularFile)
+						.filter(path -> path.getFileName().toString().startsWith("prof-pic"))
+						.findFirst();
 
-                if (profilePic.isPresent()) {
-                    return Files.probeContentType(profilePic.get());
-                }
-            }
-            return "application/octet-stream";
-        } catch (IOException e) {
-            throw new RuntimeException("Error determining content type for userId: " + userId, e);
-        }
-    }
+				if (profilePic.isPresent()) {
+					return Files.probeContentType(profilePic.get());
+				}
+			}
+			return "application/octet-stream";
+		} catch (IOException e) {
+			throw new RuntimeException("Error determining content type for userId: " + userId, e);
+		}
+	}
 
-    public String getProfilePicFilename(Long userId) {
-        try {
-            Path userDir = Paths.get(BASE_DIR + "userId-" + userId + "/");
-            try (Stream<Path> files = Files.list(userDir)) {
-                Optional<Path> profilePic = files
-                        .filter(Files::isRegularFile)
-                        .filter(path -> path.getFileName().toString().startsWith("prof-pic"))
-                        .findFirst();
+	public String getProfilePicFilename(Long userId) {
+		try {
+			Path userDir = Paths.get(BASE_DIR + "userId-" + userId + "/");
+			try (Stream<Path> files = Files.list(userDir)) {
+				Optional<Path> profilePic = files
+						.filter(Files::isRegularFile)
+						.filter(path -> path.getFileName().toString().startsWith("prof-pic"))
+						.findFirst();
 
-                return profilePic.map(path -> path.getFileName().toString()).orElse("profile-pic.jpg");
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Error getting profile picture filename for userId: " + userId, e);
-        }
-    }
+				return profilePic.map(path -> path.getFileName().toString()).orElse("profile-pic.jpg");
+			}
+		} catch (IOException e) {
+			throw new RuntimeException("Error getting profile picture filename for userId: " + userId, e);
+		}
+	}
 
-
+	// Update Profile Pic
 	public User updateProfilePic(Long userId, MultipartFile pic) {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new RuntimeException("User not found"));
-	
+
 		// Ensure the user already has a profile picture
 		if (user.getProfilePicPath() == null) {
 			throw new IllegalStateException("No profile picture found. Use addProfilePic to upload one first.");
 		}
-	
+
 		try {
 			// Get the existing file path
 			Path existingPicPath = Paths.get(user.getProfilePicPath());
-	
+
 			// Validate the new image format
 			String fileExtension = getImageExtension(pic.getBytes());
 			if (fileExtension == null) {
 				throw new BadRequestException("Invalid image format");
 			}
-	
+
 			// Overwrite the existing profile picture
 			Files.write(existingPicPath, pic.getBytes());
-	
+
 			return userRepository.save(user);
 		} catch (IOException e) {
 			throw new RuntimeException("Error updating profile picture: " + e.getMessage());
 		}
 	}
-	
+
+	// Delete Profile Pic
+	public User deleteProfilePic(Long userId) {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new RuntimeException("User not found"));
+
+		if (user.getProfilePicPath() == null) {
+			throw new IllegalStateException("No profile picture found to delete.");
+		}
+
+		try {
+			Path picPath = Paths.get(user.getProfilePicPath());
+			Files.deleteIfExists(picPath);
+			user.setProfilePicPath(null);
+
+			return userRepository.save(user);
+		} catch (IOException e) {
+			throw new RuntimeException("Error deleting profile picture: " + e.getMessage());
+		}
+	}
 
 }
