@@ -1,6 +1,9 @@
 package com.advocate.service;
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.advocate.dto.request.SignupRequest;
@@ -18,13 +21,17 @@ public class AuthService {
 	@Autowired
 	private UserRepository userRepository;
 
+	private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
 	// Sign-up new user
-	public User signup(@Valid SignupRequest signupRequest) throws EntityAlreadyExistsException {
+	public User signup(@Valid SignupRequest signupRequest) throws EntityAlreadyExistsException, BadRequestException {
 		User newUser = userRepository.findByEmail(signupRequest.getEmail());
 
 		if (newUser != null) {
 			throw new EntityAlreadyExistsException("User already exists with given email !");
 
+		} else if (!signupRequest.getPassword().equals(signupRequest.getConfirmPassword())) {
+			throw new BadRequestException("password and confirm password didn't match !");
 		}
 
 		newUser = new User();
@@ -34,7 +41,7 @@ public class AuthService {
 		newUser.setMobile(signupRequest.getMobile());
 		newUser.setFirstName(signupRequest.getFirstName());
 		newUser.setLastName(signupRequest.getLastName());
-		newUser.setPassword(signupRequest.getPassword());
+		newUser.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
 
 		String roleType = signupRequest.getRole();
 
@@ -61,27 +68,33 @@ public class AuthService {
 	public User loginAdmin(String email, String password) {
 
 		User user = userRepository.findByEmailAndRole(email, Role.ADMIN);
-    
+
 		if (user != null) {
 			if (user.getPassword().equals(password)) {
 				System.out.println("Role: " + user.getRole());
 				return user;
-		} 		throw new EntityNotFoundException("Wrong password entered");
+			}
+			throw new EntityNotFoundException("Wrong password entered");
 
 		}
 		throw new EntityNotFoundException("Admin not found with given email!");
-	
-}
+
+	}
 
 	// Login using email and password
-	public User login(String email, String password) {
+	public User login(String email, String password) throws BadRequestException {
 
 		User user = userRepository.findByEmail(email);
 
 		if (user != null) {
-			if (user.getPassword().equals(password))
-				;
-			return user;
+			
+			if (passwordEncoder.matches(password, user.getPassword()))	{	
+				System.out.println("Role: " + user.getRole());
+				return user;
+			}
+			throw new BadRequestException("Wrong password entered");
+				
+		
 		}
 
 		throw new EntityNotFoundException("User not found with given email !");

@@ -1,5 +1,6 @@
 package com.advocate.controller;
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +37,7 @@ public class AuthController {
 	// SignUp
 	@PostMapping("/signup")
 	public ResponseEntity<CommonResponseDto<User>> add(@Valid @RequestBody SignupRequest signupRequest)
-			throws EntityAlreadyExistsException {
+			throws EntityAlreadyExistsException, BadRequestException {
 		var user = authService.signup(signupRequest);
 
 		return ResponseEntity.ok(new CommonResponseDto<>("Users added successfully ", HttpStatus.OK, user));
@@ -46,7 +47,7 @@ public class AuthController {
 	// Login
 	@PostMapping("/login")
 	public ResponseEntity<CommonResponseDto<User>> loginUser(@RequestParam String email,
-			@RequestParam String password) {
+			@RequestParam String password) throws BadRequestException {
 		User user = authService.login(email, password);
 
 		return ResponseEntity.ok(new CommonResponseDto<>("Users logged-in successfully ", HttpStatus.OK, user));
