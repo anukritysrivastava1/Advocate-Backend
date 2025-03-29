@@ -2,6 +2,7 @@ package com.advocate.controller;
 
 import java.util.List;
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -48,7 +49,11 @@ public class UserController {
 	@PutMapping("/")
 	public ResponseEntity<CommonResponseDto<User>> updateUser(UpdateUserRequestDto updateUserRequestDto) {
 		User updatedUser = userService.updateUser(updateUserRequestDto);
-
+		if (updatedUser == null) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new CommonResponseDto<>("Failed to update user.", HttpStatus.INTERNAL_SERVER_ERROR, null));
+			
+		}
 		return ResponseEntity.ok(new CommonResponseDto<>("Users updated successfully ", HttpStatus.OK, updatedUser));
 
 	}
@@ -65,7 +70,7 @@ public class UserController {
 	}
 
 	// get All User By Status
-	@GetMapping("/status")
+	@GetMapping("/findByStatus")
 	public ResponseEntity<CommonResponseDto<List<User>>> getAllUserByStatus(@RequestParam String status) {
 		List<User> users = userService.getAllUsersByStatus(status);
 		if (users.isEmpty()) {
@@ -77,11 +82,16 @@ public class UserController {
 	}
 
 	// add profile pic
-	@PostMapping("/{userId}/addProfilePic")
+	@PostMapping(value= "/{userId}/addProfilePic", consumes = "multipart/form-data")
 	public ResponseEntity<CommonResponseDto<User>> addProfilePic(@RequestParam("file") MultipartFile file,
 			@PathVariable Long userId) {
 		User user = userService.addProfilePic(userId, file);
-		return ResponseEntity.ok(new CommonResponseDto<>("Profile pic added successfully ", HttpStatus.OK, user));
+		if (user == null) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new CommonResponseDto<>("Failed to upload profile pic.", HttpStatus.INTERNAL_SERVER_ERROR, null));
+			
+		}
+		return ResponseEntity.ok(new CommonResponseDto<>("Profile pic uploaded successfully ", HttpStatus.OK, null));
 
 	}
 
@@ -102,17 +112,27 @@ public class UserController {
 				.body(profilePic);
 	}
 
-	@PutMapping("/{userId}/updateProfilePic")
+	@PutMapping(value= "/{userId}/updateProfilePic",  consumes = "multipart/form-data")
 	public ResponseEntity<CommonResponseDto<User>> updateProfilePic(@RequestParam("file") MultipartFile file,
 			@PathVariable Long userId) {
 		User user = userService.updateProfilePic(userId, file);
-		return ResponseEntity.ok(new CommonResponseDto<>("Profile pic updated successfully.", HttpStatus.OK, user));
+		if (user == null) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new CommonResponseDto<>("Failed to update profile pic.", HttpStatus.INTERNAL_SERVER_ERROR, null));
+			
+		}
+		return ResponseEntity.ok(new CommonResponseDto<>("Profile pic updated successfully.", HttpStatus.OK, null));
 	}
 
 	@DeleteMapping("/{userId}/deleteProfilePic")
-	public ResponseEntity<CommonResponseDto<User>> deleteProfilePic(@PathVariable Long userId) {
+	public ResponseEntity<CommonResponseDto<User>> deleteProfilePic(@PathVariable Long userId) throws BadRequestException {
 		User user = userService.deleteProfilePic(userId);
-		return ResponseEntity.ok(new CommonResponseDto<>("Profile pic deleted successfully.", HttpStatus.OK, user));
+		if (user == null) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new CommonResponseDto<>("Failed to delete profile pic.", HttpStatus.INTERNAL_SERVER_ERROR, null));
+			
+		}
+		return ResponseEntity.ok(new CommonResponseDto<>("Profile pic deleted successfully.", HttpStatus.OK, null));
 	}
 
 }

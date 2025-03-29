@@ -13,6 +13,7 @@ import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,6 +35,8 @@ public class UserService {
 
 	private static final String BASE_DIR = "resources/";
 
+	private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(); 
+
 	// Add New user
 	public User addUser(SignupRequest signupRequest) throws EntityAlreadyExistsException {
 		User newUser = userRepository.findByEmail(signupRequest.getEmail());
@@ -49,7 +52,7 @@ public class UserService {
 		newUser.setMobile(signupRequest.getMobile());
 		newUser.setFirstName(signupRequest.getFirstName());
 		newUser.setLastName(signupRequest.getLastName());
-		newUser.setPassword(signupRequest.getPassword());
+		newUser.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
 		System.out.println(signupRequest);
 		String roleType = signupRequest.getRole();
 		System.out.println("Role is " + roleType);
@@ -113,7 +116,7 @@ public class UserService {
 		user.setFirstName(
 				(String) checkAndUpdateValueIfPresent(user.getFirstName(), updateUserRequestDto.getFirstName()));
 		user.setLastName((String) checkAndUpdateValueIfPresent(user.getLastName(), updateUserRequestDto.getLastName()));
-		user.setPassword((String) checkAndUpdateValueIfPresent(user.getPassword(), updateUserRequestDto.getPassword()));
+		user.setPassword((String) checkAndUpdateValueIfPresent(user.getPassword(), passwordEncoder.encode(updateUserRequestDto.getPassword())));
 
 		return userRepository.save(user);
 
@@ -265,12 +268,12 @@ public class UserService {
 	}
 
 	// Delete Profile Pic
-	public User deleteProfilePic(Long userId) {
+	public User deleteProfilePic(Long userId) throws BadRequestException {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new RuntimeException("User not found"));
 
 		if (user.getProfilePicPath() == null) {
-			throw new IllegalStateException("No profile picture found to delete.");
+			throw new BadRequestException("No profile picture found to delete.");
 		}
 
 		try {

@@ -16,8 +16,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailService {
 
-    private final String fromEmail = "business.hisab.kitab@gmail.com"; // Sender's email
-    private final String appPassword = "txjh mtdg kamn tfbs"; // App password
+    private final String fromEmail = "advocate.business.official@gmail.com"; // Sender's email
+    private final String appPassword = "qzrs vkxf ipgb fweq"; // App password
 
     // Send Invitation message to the provided email address
     public String sendSignUpOtp(String recipientEmail) {

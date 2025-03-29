@@ -23,6 +23,7 @@ import com.advocate.entity.Client;
 import com.advocate.enums.Role;
 import com.advocate.exception.EntityAlreadyExistsException;
 import com.advocate.repository.ClientRepository;
+import com.advocate.repository.UserRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -32,10 +33,15 @@ public class ClientService {
     @Autowired
     private ClientRepository clientRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private static final String BASE_DIR = "resources/";
 
     // Add Clients
-    public Client addClient(ClientRequestDto clientRequestDto) throws EntityAlreadyExistsException {
+    public Client addClient(ClientRequestDto clientRequestDto, Long userId ) throws EntityAlreadyExistsException {
+        
+        
         Client newClient = clientRepository.findByEmail(clientRequestDto.getEmail());
 
         if (newClient != null) {
@@ -44,6 +50,12 @@ public class ClientService {
         }
 
         newClient = new Client();
+
+        if (userId != -1) {
+            newClient.setUser(userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with given id")));
+            
+        }
+        
         newClient.setAddress(clientRequestDto.getAddress());
         newClient.setEmail(clientRequestDto.getEmail());
         newClient.setMobile(clientRequestDto.getMobile());

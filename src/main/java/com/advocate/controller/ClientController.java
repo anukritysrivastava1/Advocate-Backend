@@ -25,6 +25,11 @@ import com.advocate.entity.Client;
 import com.advocate.exception.EntityAlreadyExistsException;
 import com.advocate.service.ClientService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+
 @RestController
 @RequestMapping("/api/clients")
 public class ClientController {
@@ -34,11 +39,10 @@ public class ClientController {
 
     // add
     @PostMapping("/")
-    public ResponseEntity<CommonResponseDto<Client>> addClient(@RequestBody ClientRequestDto clientRequestDto)
+    public ResponseEntity<CommonResponseDto<Client>> addClient(@RequestBody ClientRequestDto clientRequestDto, @RequestParam Long userId)
             throws EntityAlreadyExistsException {
-        System.out.println(clientRequestDto);
-        System.out.println("before service");
-        var client = clientService.addClient(clientRequestDto);
+        
+        var client = clientService.addClient(clientRequestDto, userId);
 
         return ResponseEntity.ok(new CommonResponseDto<>("Users added successfully ", HttpStatus.OK, client));
 
@@ -70,14 +74,24 @@ public class ClientController {
         return ResponseEntity.ok(new CommonResponseDto<>("Client deleted successfully.", HttpStatus.OK, null));
     }
 
-    // add profile pic
-    @PostMapping("/{clientId}/addProfilePic")
-    public ResponseEntity<CommonResponseDto<Client>> addProfilePic(@RequestParam("file") MultipartFile file,
+    @PostMapping(value = "/{clientId}/addProfilePic", consumes = "multipart/form-data")
+    @Operation(
+        summary = "Upload profile picture",
+        description = "Uploads a profile picture for the given client ID",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Profile picture uploaded successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "500", description = "Server error")
+        }
+    )
+    public ResponseEntity<CommonResponseDto<Client>> addProfilePic(
+            @Parameter(description = "Profile picture file", required = true)
+            @RequestParam("file") MultipartFile file,
             @PathVariable Long clientId) {
         Client client = clientService.addProfilePic(clientId, file);
-        return ResponseEntity.ok(new CommonResponseDto<>("Profile pic added successfully ", HttpStatus.OK, client));
-
+        return ResponseEntity.ok(new CommonResponseDto<>("Profile pic added successfully", HttpStatus.OK, client));
     }
+    
 
     @GetMapping("/{clientId}/profile-picture")
     public ResponseEntity<Resource> getProfilePicture(@PathVariable Long clientId) {

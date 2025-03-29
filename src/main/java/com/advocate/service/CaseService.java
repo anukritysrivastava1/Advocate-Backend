@@ -160,4 +160,8 @@ public class CaseService {
     public List<Case> searchByCaseStatus(CaseStatus caseStatus) {
         return caseRepository.findByCaseStatus(caseStatus);
     }
+
+    public List<Case> searchByClientName(String clientName) {
+        return caseRepository.findByClientName(clientName);
+    }
 }
