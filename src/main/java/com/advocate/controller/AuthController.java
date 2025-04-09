@@ -4,6 +4,7 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.advocate.dto.request.AdminLoginRequest;
+import com.advocate.dto.request.ChangePasswordRequest;
 import com.advocate.dto.request.SignupRequest;
 import com.advocate.dto.response.CommonResponseDto;
 import com.advocate.entity.User;
@@ -46,18 +48,17 @@ public class AuthController {
 
 	// Login
 	@PostMapping("/login")
-	public ResponseEntity<CommonResponseDto<User>> loginUser(@RequestParam String email,
-			@RequestParam String password) throws BadRequestException {
-		User user = authService.login(email, password);
+	public ResponseEntity<CommonResponseDto<User>> loginUser(@RequestBody @Valid AdminLoginRequest loginRequest)
+			throws BadRequestException {
+		User user = authService.login(loginRequest.getEmail(), loginRequest.getPassword());
 
 		return ResponseEntity.ok(new CommonResponseDto<>("Users logged-in successfully ", HttpStatus.OK, user));
-
 	}
 
 	// Admin Login
 	@PostMapping("/adminLogin")
 	public ResponseEntity<CommonResponseDto<User>> loginAdmin(@RequestBody AdminLoginRequest loginRequest) {
-		
+
 		User user = authService.loginAdmin(loginRequest.getEmail(), loginRequest.getPassword());
 
 		return ResponseEntity.ok(new CommonResponseDto<>("Admin logged-in successfully ", HttpStatus.OK, user));
@@ -66,6 +67,19 @@ public class AuthController {
 	// Logout
 
 	// ForgetPassword
+	@PatchMapping("/changePassword")
+	public ResponseEntity<String> changePassword(@RequestBody @Valid ChangePasswordRequest changePasswordRequest) {
+		boolean isPasswordChanged = authService.changePassword(
+				changePasswordRequest.getEmail(),
+				changePasswordRequest.getOtp(),
+				changePasswordRequest.getNewPassword());
+
+		if (isPasswordChanged) {
+			return ResponseEntity.ok("Password changed successfully.");
+		} else {
+			return ResponseEntity.badRequest().body("Failed to change password. Invalid OTP or email.");
+		}
+	}
 
 	// LoginWithOTPTeamMem
 	@PostMapping("/sendOTP")

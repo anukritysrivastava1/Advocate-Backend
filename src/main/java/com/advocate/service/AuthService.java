@@ -2,7 +2,6 @@ package com.advocate.service;
 
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -87,16 +86,37 @@ public class AuthService {
 		User user = userRepository.findByEmail(email);
 
 		if (user != null) {
-			
-			if (passwordEncoder.matches(password, user.getPassword()))	{	
+
+			if (passwordEncoder.matches(password, user.getPassword())) {
 				System.out.println("Role: " + user.getRole());
 				return user;
 			}
 			throw new BadRequestException("Wrong password entered");
-				
-		
+
 		}
 
 		throw new EntityNotFoundException("User not found with given email !");
 	}
+
+	public boolean changePassword(String email, String otp, String newPassword) {
+		User user = userRepository.findByEmail(email);
+	
+		if (user == null) {
+			throw new EntityNotFoundException("User not found with the given email!");
+		}
+	
+		// Verify OTP
+		if (!otp.equals(user.getOtp())) {
+			return false; // Invalid OTP
+		}
+	
+		// Update the password
+		user.setPassword(passwordEncoder.encode(newPassword));
+		user.setOtp(null); // Clear the OTP after successful password change
+		userRepository.save(user);
+	
+		return true;
+	}
+
+
 }
