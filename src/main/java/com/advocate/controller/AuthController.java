@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.advocate.dto.request.AdminLoginRequest;
-import com.advocate.dto.request.ChangePasswordRequest;
 import com.advocate.dto.request.SignupRequest;
 import com.advocate.dto.response.CommonResponseDto;
 import com.advocate.entity.User;
@@ -21,6 +20,7 @@ import com.advocate.service.AuthService;
 import com.advocate.service.EmailService;
 import com.advocate.service.UserService;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
 @RestController
@@ -66,20 +66,21 @@ public class AuthController {
 
 	// Logout
 
-	// ForgetPassword
-	@PatchMapping("/changePassword")
-	public ResponseEntity<String> changePassword(@RequestBody @Valid ChangePasswordRequest changePasswordRequest) {
-		boolean isPasswordChanged = authService.changePassword(
-				changePasswordRequest.getEmail(),
-				changePasswordRequest.getOtp(),
-				changePasswordRequest.getNewPassword());
-
-		if (isPasswordChanged) {
-			return ResponseEntity.ok("Password changed successfully.");
-		} else {
-			return ResponseEntity.badRequest().body("Failed to change password. Invalid OTP or email.");
+	// UpdatePassword
+		@PatchMapping("/update-password")
+	public ResponseEntity<CommonResponseDto<Object>> updatePassword(@RequestParam("email") String email,
+			@RequestParam("newPassword") String newPassword) {
+		try {
+			authService.updatePassword(email, newPassword);
+			return ResponseEntity.ok(new CommonResponseDto<>("Password Changed Successfully.", HttpStatus.OK, null));
+		} catch (EntityNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new CommonResponseDto<>("Users Not Found.", HttpStatus.NOT_FOUND, null));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CommonResponseDto<>("An error occurred while updating the password.", HttpStatus.INTERNAL_SERVER_ERROR, null));
+			
 		}
 	}
+
 
 	// LoginWithOTPTeamMem
 	@PostMapping("/sendOTP")

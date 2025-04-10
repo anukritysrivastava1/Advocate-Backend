@@ -12,6 +12,9 @@ import com.advocate.enums.Role;
 public interface UserRepository extends JpaRepository<User, Long> {
     // Custom queries can be added here
 
+        // Find a user by email and password for login
+        User findByEmailAndPassword(String email, String password);
+
     // query to find user by email
     User findByEmail(String email);
 

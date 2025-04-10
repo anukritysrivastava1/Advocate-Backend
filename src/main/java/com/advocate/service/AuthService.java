@@ -12,6 +12,7 @@ import com.advocate.exception.EntityAlreadyExistsException;
 import com.advocate.repository.UserRepository;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
 @Service
@@ -69,7 +70,7 @@ public class AuthService {
 		User user = userRepository.findByEmailAndRole(email, Role.ADMIN);
 
 		if (user != null) {
-			if (user.getPassword().equals(password)) {
+			if (passwordEncoder.matches(password, user.getPassword())) {
 				System.out.println("Role: " + user.getRole());
 				return user;
 			}
@@ -98,25 +99,20 @@ public class AuthService {
 		throw new EntityNotFoundException("User not found with given email !");
 	}
 
-	public boolean changePassword(String email, String otp, String newPassword) {
-		User user = userRepository.findByEmail(email);
-	
-		if (user == null) {
-			throw new EntityNotFoundException("User not found with the given email!");
-		}
-	
-		// Verify OTP
-		if (!otp.equals(user.getOtp())) {
-			return false; // Invalid OTP
-		}
-	
-		// Update the password
-		user.setPassword(passwordEncoder.encode(newPassword));
-		user.setOtp(null); // Clear the OTP after successful password change
-		userRepository.save(user);
-	
-		return true;
-	}
+	//Update Password
+	@Transactional
+	public String updatePassword(String email, String newPassword) {
+	    User user = userRepository.findByEmail(email);
 
+	    if (user == null) {
+	        throw new EntityNotFoundException("User with email " + email + " does not exist");
+	    }
+
+		String encodedPassword = passwordEncoder.encode(newPassword);
+		user.setPassword(encodedPassword);
+		userRepository.save(user);
+
+	    return "Password updated successfully!";
+	}
 
 }

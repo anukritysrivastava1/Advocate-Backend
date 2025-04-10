@@ -93,7 +93,6 @@ public class User {
 
 	private String status ;
 
-	private String otp;
 
 	@Column(name = "profile_pic_path")
     private String profilePicPath;
