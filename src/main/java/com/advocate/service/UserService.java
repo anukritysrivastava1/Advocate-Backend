@@ -35,7 +35,7 @@ public class UserService {
 
 	private static final String BASE_DIR = "resources/";
 
-	private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(); 
+	private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 	// Add New user
 	public User addUser(SignupRequest signupRequest) throws EntityAlreadyExistsException {
@@ -116,7 +116,8 @@ public class UserService {
 		user.setFirstName(
 				(String) checkAndUpdateValueIfPresent(user.getFirstName(), updateUserRequestDto.getFirstName()));
 		user.setLastName((String) checkAndUpdateValueIfPresent(user.getLastName(), updateUserRequestDto.getLastName()));
-		user.setPassword((String) checkAndUpdateValueIfPresent(user.getPassword(), passwordEncoder.encode(updateUserRequestDto.getPassword())));
+		user.setPassword((String) checkAndUpdateValueIfPresent(user.getPassword(),
+				passwordEncoder.encode(updateUserRequestDto.getPassword())));
 
 		return userRepository.save(user);
 

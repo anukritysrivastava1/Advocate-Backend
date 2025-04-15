@@ -2,7 +2,6 @@ package com.advocate.service;
 
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +12,7 @@ import com.advocate.exception.EntityAlreadyExistsException;
 import com.advocate.repository.UserRepository;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
 @Service
@@ -70,7 +70,7 @@ public class AuthService {
 		User user = userRepository.findByEmailAndRole(email, Role.ADMIN);
 
 		if (user != null) {
-			if (user.getPassword().equals(password)) {
+			if (passwordEncoder.matches(password, user.getPassword())) {
 				System.out.println("Role: " + user.getRole());
 				return user;
 			}
@@ -87,16 +87,32 @@ public class AuthService {
 		User user = userRepository.findByEmail(email);
 
 		if (user != null) {
-			
-			if (passwordEncoder.matches(password, user.getPassword()))	{	
+
+			if (passwordEncoder.matches(password, user.getPassword())) {
 				System.out.println("Role: " + user.getRole());
 				return user;
 			}
 			throw new BadRequestException("Wrong password entered");
-				
-		
+
 		}
 
 		throw new EntityNotFoundException("User not found with given email !");
 	}
+
+	//Update Password
+	@Transactional
+	public String updatePassword(String email, String newPassword) {
+	    User user = userRepository.findByEmail(email);
+
+	    if (user == null) {
+	        throw new EntityNotFoundException("User with email " + email + " does not exist");
+	    }
+
+		String encodedPassword = passwordEncoder.encode(newPassword);
+		user.setPassword(encodedPassword);
+		userRepository.save(user);
+
+	    return "Password updated successfully!";
+	}
+
 }

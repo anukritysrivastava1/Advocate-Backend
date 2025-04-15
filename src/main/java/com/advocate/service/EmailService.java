@@ -77,6 +77,8 @@ public class EmailService {
 
     public String sendOtpNotification(String recipientEmail) {
         // SMTP server configuration
+
+
         Properties properties = new Properties();
         properties.put("mail.smtp.host", "smtp.gmail.com");
         properties.put("mail.smtp.port", "587");
@@ -137,6 +139,7 @@ public class EmailService {
         return String.valueOf(otp);
     }
 
+    
 }
 
 // App Password Steps :-

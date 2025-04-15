@@ -11,7 +11,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,7 +24,6 @@ public class SignupRequest {
 	@NotBlank(message = "Last Name is required")
 	@Size(min = 4, max = 20, message = "Last Name must be between 4 and 20 characters")
 	private String lastName;
-	
 
 	@NotBlank(message = "Email is required")
 	@Email(message = "Invalid email format")
@@ -41,16 +39,10 @@ public class SignupRequest {
 	@NotBlank(message = "Phone number is required")
 	private String mobile;
 
-
-	
-
 	@NotBlank(message = "Role is required")
 	private String role; // Ensure this field is included in the request
 
 	@JsonInclude(JsonInclude.Include.NON_NULL) // Ignore null fields in JSON
 	private Address address; // Ensure this field is included in the request
 
-	
-	
-	
 }

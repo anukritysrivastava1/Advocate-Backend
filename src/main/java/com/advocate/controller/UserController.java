@@ -52,7 +52,7 @@ public class UserController {
 		if (updatedUser == null) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(new CommonResponseDto<>("Failed to update user.", HttpStatus.INTERNAL_SERVER_ERROR, null));
-			
+
 		}
 		return ResponseEntity.ok(new CommonResponseDto<>("Users updated successfully ", HttpStatus.OK, updatedUser));
 
@@ -82,14 +82,15 @@ public class UserController {
 	}
 
 	// add profile pic
-	@PostMapping(value= "/{userId}/addProfilePic", consumes = "multipart/form-data")
+	@PostMapping(value = "/{userId}/addProfilePic", consumes = "multipart/form-data")
 	public ResponseEntity<CommonResponseDto<User>> addProfilePic(@RequestParam("file") MultipartFile file,
 			@PathVariable Long userId) {
 		User user = userService.addProfilePic(userId, file);
 		if (user == null) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(new CommonResponseDto<>("Failed to upload profile pic.", HttpStatus.INTERNAL_SERVER_ERROR, null));
-			
+					.body(new CommonResponseDto<>("Failed to upload profile pic.", HttpStatus.INTERNAL_SERVER_ERROR,
+							null));
+
 		}
 		return ResponseEntity.ok(new CommonResponseDto<>("Profile pic uploaded successfully ", HttpStatus.OK, null));
 
@@ -112,25 +113,28 @@ public class UserController {
 				.body(profilePic);
 	}
 
-	@PutMapping(value= "/{userId}/updateProfilePic",  consumes = "multipart/form-data")
+	@PutMapping(value = "/{userId}/updateProfilePic", consumes = "multipart/form-data")
 	public ResponseEntity<CommonResponseDto<User>> updateProfilePic(@RequestParam("file") MultipartFile file,
 			@PathVariable Long userId) {
 		User user = userService.updateProfilePic(userId, file);
 		if (user == null) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(new CommonResponseDto<>("Failed to update profile pic.", HttpStatus.INTERNAL_SERVER_ERROR, null));
-			
+					.body(new CommonResponseDto<>("Failed to update profile pic.", HttpStatus.INTERNAL_SERVER_ERROR,
+							null));
+
 		}
 		return ResponseEntity.ok(new CommonResponseDto<>("Profile pic updated successfully.", HttpStatus.OK, null));
 	}
 
 	@DeleteMapping("/{userId}/deleteProfilePic")
-	public ResponseEntity<CommonResponseDto<User>> deleteProfilePic(@PathVariable Long userId) throws BadRequestException {
+	public ResponseEntity<CommonResponseDto<User>> deleteProfilePic(@PathVariable Long userId)
+			throws BadRequestException {
 		User user = userService.deleteProfilePic(userId);
 		if (user == null) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(new CommonResponseDto<>("Failed to delete profile pic.", HttpStatus.INTERNAL_SERVER_ERROR, null));
-			
+					.body(new CommonResponseDto<>("Failed to delete profile pic.", HttpStatus.INTERNAL_SERVER_ERROR,
+							null));
+
 		}
 		return ResponseEntity.ok(new CommonResponseDto<>("Profile pic deleted successfully.", HttpStatus.OK, null));
 	}
