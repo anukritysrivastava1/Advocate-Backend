@@ -64,41 +64,37 @@ public class AuthService {
 
 	}
 
-	// Login for Admin
-	public User loginAdmin(String email, String password) {
 
-		User user = userRepository.findByEmailAndRole(email, Role.ADMIN);
 
-		if (user != null) {
-			if (passwordEncoder.matches(password, user.getPassword())) {
-				System.out.println("Role: " + user.getRole());
-				return user;
+	public User login(String email, String password, Role role) {
+
+		User user;
+	
+		if (role == Role.ADMIN) {
+			user = userRepository.findByEmailAndRole(email, Role.ADMIN);
+			if (user == null) {
+				throw new EntityNotFoundException("Admin not found with given email!");
 			}
-			throw new EntityNotFoundException("Wrong password entered");
-
-		}
-		throw new EntityNotFoundException("Admin not found with given email!");
-
-	}
-
-	// Login using email and password
-	public User login(String email, String password) throws BadRequestException {
-
-		User user = userRepository.findByEmail(email);
-
-		if (user != null) {
-
-			if (passwordEncoder.matches(password, user.getPassword())) {
-				System.out.println("Role: " + user.getRole());
-				return user;
+		} else {
+			user = userRepository.findByEmail(email);
+			if (user == null) {
+				throw new EntityNotFoundException("User not found with given email!");
 			}
-			throw new BadRequestException("Wrong password entered");
-
 		}
-
-		throw new EntityNotFoundException("User not found with given email !");
+	
+		if (!passwordEncoder.matches(password, user.getPassword())) {
+			throw new IllegalArgumentException("Wrong password entered");
+		}
+	
+		System.out.println("Role: " + user.getRole());
+		return user;
 	}
+	
 
+
+
+
+	
 	//Update Password
 	@Transactional
 	public String updatePassword(String email, String newPassword) {

@@ -88,7 +88,7 @@ public class User {
 	private List<Case> cases;
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<Client> clients;
 
 	private String status ;

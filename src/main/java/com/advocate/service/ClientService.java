@@ -39,23 +39,23 @@ public class ClientService {
     private static final String BASE_DIR = "resources/";
 
     // Add Clients
-    public Client addClient(ClientRequestDto clientRequestDto, Long userId ) throws EntityAlreadyExistsException {
-        
-        
+    public Client addClient(ClientRequestDto clientRequestDto, Long userId) throws EntityAlreadyExistsException {
+
         Client newClient = clientRepository.findByEmail(clientRequestDto.getEmail());
 
         if (newClient != null) {
-            throw new EntityAlreadyExistsException("User already exists with given email !");
+            throw new EntityAlreadyExistsException("Client already exists with given email !");
 
         }
 
         newClient = new Client();
 
         if (userId != -1) {
-            newClient.setUser(userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with given id")));
-            
+            newClient.setUser(userRepository.findById(userId)
+                    .orElseThrow(() -> new EntityNotFoundException("Client not found with given id")));
+
         }
-        
+
         newClient.setAddress(clientRequestDto.getAddress());
         newClient.setEmail(clientRequestDto.getEmail());
         newClient.setMobile(clientRequestDto.getMobile());
@@ -105,6 +105,17 @@ public class ClientService {
 
     private Object checkAndUpdateValueIfPresent(Object object1, Object object2) {
         return (object2 == null || object2.toString().equals("")) ? object1 : object2;
+    }
+
+    // Service method to get all clients
+    public List<Client> getAllClients() {
+        return clientRepository.findAll();
+    }
+
+    // Service method to get client by ID
+    public Client getClientById(Long id) {
+        return clientRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Client not found with id: " + id));
     }
 
     // Status of Client
