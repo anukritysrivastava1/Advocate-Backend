@@ -18,7 +18,7 @@ public class CaseDocumentController {
     @Autowired
     private CaseDocumentService caseDocumentService;
 
-    @PostMapping("/{caseId}/uploadDocument")
+    @PostMapping("/{caseId}/document")
     public ResponseEntity<CommonResponseDto<Void>> uploadCaseDocument(@PathVariable Long caseId,
             @RequestParam("file") MultipartFile file, @RequestParam("documentName") String documentName,
             @RequestParam("description") String description) {
@@ -26,7 +26,7 @@ public class CaseDocumentController {
         return ResponseEntity.ok(new CommonResponseDto<>("Document Created Successfully.", HttpStatus.CREATED,null));
     }
 
-    @GetMapping("/{caseId}/downloadDocument/{documentName}")
+    @GetMapping("/{caseId}/document/{documentName}")
     public ResponseEntity<Resource> downloadCaseDocument(@PathVariable Long caseId,
             @PathVariable String documentName) {
         Resource resource = caseDocumentService.getCaseDocument(caseId, documentName);
@@ -36,14 +36,14 @@ public class CaseDocumentController {
                 .body(resource);
     }
 
-    @DeleteMapping("/{caseId}/deleteDocument/{documentName}")
+    @DeleteMapping("/{caseId}/document/{documentName}")
     public ResponseEntity<CommonResponseDto<String>> deleteCaseDocument(@PathVariable Long caseId,
             @PathVariable String documentName) {
         caseDocumentService.deleteCaseDocument(caseId, documentName);
         return ResponseEntity.ok(new CommonResponseDto<>("Document deleted successfully.", HttpStatus.OK, null));
     }
 
-    @PutMapping("/{caseId}/updateDocument")
+    @PutMapping("/{caseId}/document")
     public ResponseEntity<CommonResponseDto<Void>> updateCaseDocument(@PathVariable Long caseId,
             @RequestParam("file") MultipartFile file, @RequestParam("name") String documentName,
             @RequestParam("description") String description) {

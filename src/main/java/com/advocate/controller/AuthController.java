@@ -11,10 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.advocate.dto.request.AdminLoginRequest;
+import com.advocate.dto.request.LoginRequest;
 import com.advocate.dto.request.SignupRequest;
 import com.advocate.dto.response.CommonResponseDto;
 import com.advocate.entity.User;
+import com.advocate.enums.Role;
 import com.advocate.exception.EntityAlreadyExistsException;
 import com.advocate.service.AuthService;
 import com.advocate.service.EmailService;
@@ -46,28 +47,26 @@ public class AuthController {
 
 	}
 
-	// Login
+
 	@PostMapping("/login")
-	public ResponseEntity<CommonResponseDto<User>> loginUser(@RequestBody @Valid AdminLoginRequest loginRequest)
-			throws BadRequestException {
-		User user = authService.login(loginRequest.getEmail(), loginRequest.getPassword());
-
-		return ResponseEntity.ok(new CommonResponseDto<>("Users logged-in successfully ", HttpStatus.OK, user));
+	public ResponseEntity<CommonResponseDto<User>> login(@RequestBody @Valid LoginRequest loginRequest) {
+		Role resolvedRole = Role.USER; // Default
+	
+		if (loginRequest.getRole() != null && !loginRequest.getRole().isBlank()) {
+			try {
+				resolvedRole = Role.valueOf(loginRequest.getRole().toUpperCase());
+			} catch (IllegalArgumentException ex) {
+				throw new IllegalArgumentException("Invalid role. Accepted values are: USER or ADMIN.");
+			}
+		}
+	
+		User user = authService.login(loginRequest.getEmail(), loginRequest.getPassword(), resolvedRole);
+		return ResponseEntity.ok(new CommonResponseDto<>("Logged-in successfully", HttpStatus.OK, user));
 	}
-
-	// Admin Login
-	@PostMapping("/adminLogin")
-	public ResponseEntity<CommonResponseDto<User>> loginAdmin(@RequestBody AdminLoginRequest loginRequest) {
-
-		User user = authService.loginAdmin(loginRequest.getEmail(), loginRequest.getPassword());
-
-		return ResponseEntity.ok(new CommonResponseDto<>("Admin logged-in successfully ", HttpStatus.OK, user));
-	}
-
-	// Logout
+	
 
 	// UpdatePassword
-		@PatchMapping("/update-password")
+	@PatchMapping("/update-password")
 	public ResponseEntity<CommonResponseDto<Object>> updatePassword(@RequestParam("email") String email,
 			@RequestParam("newPassword") String newPassword) {
 		try {
@@ -83,7 +82,7 @@ public class AuthController {
 
 
 	// LoginWithOTPTeamMem
-	@PostMapping("/sendOTP")
+	@PostMapping("/send-otp")
 	public ResponseEntity<String> sendOTPMail(@RequestParam("email") String recipientEmail,
 			@RequestParam("type") String type) {
 		boolean isUserExist = userService.userExistByEmail(recipientEmail);

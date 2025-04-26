@@ -12,7 +12,7 @@ public class AdvocateApplication {
 
 	public static void main(String[] args) {
 
-		// Load environment variables from .env file
+		//Load environment variables from .env file
 		// Dotenv dotenv = Dotenv.configure().load();
 		// dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
 

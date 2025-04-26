@@ -37,23 +37,38 @@ public class ClientController {
     private ClientService clientService;
 
     // add
-    @PostMapping("/")
-    public ResponseEntity<CommonResponseDto<Client>> addClient(@RequestBody ClientRequestDto clientRequestDto, @RequestParam Long userId)
+    @PostMapping("")
+    public ResponseEntity<CommonResponseDto<Client>> addClient(@RequestBody ClientRequestDto clientRequestDto,
+            @RequestParam Long userId)
             throws EntityAlreadyExistsException {
-        
+
         var client = clientService.addClient(clientRequestDto, userId);
 
-        return ResponseEntity.ok(new CommonResponseDto<>("Users added successfully ", HttpStatus.OK, client));
+        return ResponseEntity.ok(new CommonResponseDto<>("Client added successfully ", HttpStatus.OK, client));
 
     }
 
-    @PutMapping("/")
+    @PutMapping("")
     public ResponseEntity<CommonResponseDto<Client>> updateClient(
             @RequestBody UpdateClientRequestDto updateClientRequestDto) {
         Client updatedClient = clientService.updateClient(updateClientRequestDto);
 
         return ResponseEntity.ok(new CommonResponseDto<>("Client updated successfully ", HttpStatus.OK, updatedClient));
 
+    }
+
+    // Get All Clients
+    @GetMapping("")
+    public ResponseEntity<List<Client>> getAllClients() {
+        List<Client> clients = clientService.getAllClients();
+        return ResponseEntity.ok(clients);
+    }
+
+    // Get Client by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Client> getClientById(@PathVariable Long id) {
+        Client client = clientService.getClientById(id);
+        return ResponseEntity.ok(client);
     }
 
     @GetMapping("/status")
@@ -73,26 +88,20 @@ public class ClientController {
         return ResponseEntity.ok(new CommonResponseDto<>("Client deleted successfully.", HttpStatus.OK, null));
     }
 
-    @PostMapping(value = "/{clientId}/addProfilePic", consumes = "multipart/form-data")
-    @Operation(
-        summary = "Upload profile picture",
-        description = "Uploads a profile picture for the given client ID",
-        responses = {
+    @PostMapping(value = "/{clientId}/profile-pic", consumes = "multipart/form-data")
+    @Operation(description = "Uploads a profile picture for the given client ID", responses = {
             @ApiResponse(responseCode = "200", description = "Profile picture uploaded successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "500", description = "Server error")
-        }
-    )
+    })
     public ResponseEntity<CommonResponseDto<Client>> addProfilePic(
-            @Parameter(description = "Profile picture file", required = true)
-            @RequestParam("file") MultipartFile file,
+            @Parameter(description = "Profile picture file", required = true) @RequestParam("file") MultipartFile file,
             @PathVariable Long clientId) {
         Client client = clientService.addProfilePic(clientId, file);
         return ResponseEntity.ok(new CommonResponseDto<>("Profile pic added successfully", HttpStatus.OK, client));
     }
-    
 
-    @GetMapping("/{clientId}/profile-picture")
+    @GetMapping("/{clientId}/profile-pic")
     public ResponseEntity<Resource> getProfilePicture(@PathVariable Long clientId) {
         Resource profilePic = clientService.getProfilePic(clientId);
 
@@ -109,7 +118,7 @@ public class ClientController {
                 .body(profilePic);
     }
 
-    @PutMapping("/{clientId}/updateProfilePic")
+    @PutMapping("/{clientId}/profile-pic")
     public ResponseEntity<CommonResponseDto<Client>> updateProfilePic(@RequestParam("file") MultipartFile file,
             @PathVariable Long clientId) {
         try {
@@ -123,7 +132,7 @@ public class ClientController {
         }
     }
 
-    @DeleteMapping("/{clientId}/deleteProfilePic")
+    @DeleteMapping("/{clientId}/profile-pic")
     public ResponseEntity<CommonResponseDto<Client>> deleteProfilePic(@PathVariable Long clientId) {
         Client client = clientService.deleteProfilePic(clientId);
         return ResponseEntity.ok(new CommonResponseDto<>("Profile pic deleted successfully.", HttpStatus.OK, client));

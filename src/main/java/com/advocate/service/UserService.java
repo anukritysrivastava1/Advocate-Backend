@@ -126,6 +126,17 @@ public class UserService {
 	private Object checkAndUpdateValueIfPresent(Object object1, Object object2) {
 		return (object2 == null || object2.toString().equals("")) ? object1 : object2;
 	}
+	
+	// Get all users
+	public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    // Get user by ID
+    public User getUserById(Long id) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        return optionalUser.orElse(null);  // or throw exception if preferred
+    }
 
 	// Find if userEmail already exist
 	public boolean userExistByEmail(String email) {

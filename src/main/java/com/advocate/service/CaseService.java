@@ -1,6 +1,10 @@
 package com.advocate.service;
 
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,26 +32,12 @@ public class CaseService {
     @Autowired
     private ClientRepository clientRepository;
 
+    // Get All Cases
     public List<Case> getAllCases() {
         return caseRepository.findAll();
     }
 
-    public List<Case> getCasesByDate(String date) {
-        return caseRepository.findByPresentDate(date);
-    }
-
-    public List<Case> getPreviousCases(String date) {
-        return caseRepository.findByLastDateBefore(date);
-    }
-
-    public List<Case> getUpcomingCases(String date) {
-        return caseRepository.findByPresentDateAfter(date);
-    }
-
-    public List<String> getAllDates(Long caseId){
-        return caseRepository.findCaseDates(caseId);
-    }
-
+    // Add Case
     public Case addCase(CaseRequestDto caseRequestDto) throws EntityAlreadyExistsException {
 
         if (caseRequestDto.getCaseId() != null && caseRepository.existsById(caseRequestDto.getCaseId())) {
@@ -90,6 +80,7 @@ public class CaseService {
         return caseRepository.save(newCase);
     }
 
+    // Update Case
     public Case updateCase(CaseRequestDto caseRequestDto) {
 
         Case existCases = caseRepository.findById(caseRequestDto.getCaseId())
@@ -137,31 +128,48 @@ public class CaseService {
         return (newValue == null || newValue.trim().isEmpty()) ? existingValue : newValue;
     }
 
+    // Delete Case By Id
     public void deleteCaseById(Long id) {
         Case caseEntity = caseRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Case not found with the given ID."));
-    
+
         if ("INACTIVE".equalsIgnoreCase(caseEntity.getStatus())) {
             throw new IllegalStateException("Case is already deleted.");
         }
-    
-        caseEntity.setStatus("INACTIVE"); 
+
+        caseEntity.setStatus("INACTIVE");
         caseRepository.save(caseEntity);
     }
-    
-    public List<Case> searchByDate(String date) {
-        return caseRepository.findByPresentDate(date);
+
+    // Search Cases
+    public List<Case> searchCases(String searchType, String searchValue, Long caseId) {
+        switch (searchType.toLowerCase()) {
+            case "date":
+                try {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                    formatter.parse(searchValue);
+                } catch (DateTimeParseException e) {
+                    throw new IllegalArgumentException("Invalid date format. Please use dd-MM-yyyy");
+                }
+            case "case_no":
+                return caseRepository.findByCaseNoContainingIgnoreCase(searchValue);
+            case "status":
+                CaseStatus status = CaseStatus.valueOf(searchValue.toUpperCase());
+                return caseRepository.findByCaseStatus(status);
+            case "client_name":
+                return caseRepository.findByClientName(searchValue);
+            case "all_dates":
+                return caseRepository.findByPresentDate(searchValue); // Adjust this based on your logic for all dates
+            case "case_id":
+                if (caseId != null) {
+                    return caseRepository.findById(caseId).stream().collect(Collectors.toList());
+                } else {
+                    throw new IllegalArgumentException("Case ID is required for this filter.");
+                }
+            default:
+                throw new IllegalArgumentException("Invalid filter type");
+
+        }
     }
 
-    public List<Case> searchByCaseNo(String caseNo) {
-        return caseRepository.findByCaseNoContainingIgnoreCase(caseNo);
-    }
-    
-    public List<Case> searchByCaseStatus(CaseStatus caseStatus) {
-        return caseRepository.findByCaseStatus(caseStatus);
-    }
-
-    public List<Case> searchByClientName(String clientName) {
-        return caseRepository.findByClientName(clientName);
-    }
 }

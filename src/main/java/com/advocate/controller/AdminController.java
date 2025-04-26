@@ -22,16 +22,15 @@ import com.advocate.entity.User;
 import com.advocate.exception.EntityAlreadyExistsException;
 import com.advocate.service.UserService;
 
-
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
 
-@Autowired
+	@Autowired
 	private UserService userService;
 
 	// add
-	@PostMapping("/add")
+	@PostMapping("")
 	public ResponseEntity<CommonResponseDto<User>> add(@RequestBody SignupRequest signupRequest)
 			throws EntityAlreadyExistsException {
 		System.out.println(signupRequest);
@@ -43,7 +42,7 @@ public class AdminController {
 	}
 
 	// Update User
-	@PutMapping("/update")
+	@PutMapping("")
 	public ResponseEntity<CommonResponseDto<User>> updateUser(UpdateUserRequestDto updateUserRequestDto) {
 		User updatedUser = userService.updateUser(updateUserRequestDto);
 
@@ -74,13 +73,12 @@ public class AdminController {
 
 	}
 
-        @DeleteMapping("/{id}")
-    public ResponseEntity<CommonResponseDto<User>> deleteClientById(@PathVariable Long id){
+	@DeleteMapping("/{id}")
+	public ResponseEntity<CommonResponseDto<User>> deleteClientById(@PathVariable Long id) {
 
-        userService.deleteAdminById(id);
-        return ResponseEntity.ok(new CommonResponseDto<>("Admin deleted successfully. ",  HttpStatus.OK, null));
+		userService.deleteAdminById(id);
+		return ResponseEntity.ok(new CommonResponseDto<>("Admin deleted successfully. ", HttpStatus.OK, null));
 
-    }
+	}
 
 }
-

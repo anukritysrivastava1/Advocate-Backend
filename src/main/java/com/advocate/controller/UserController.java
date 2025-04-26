@@ -34,7 +34,7 @@ public class UserController {
 	private UserService userService;
 
 	// add
-	@PostMapping("/")
+	@PostMapping("")
 	public ResponseEntity<CommonResponseDto<User>> add(@RequestBody SignupRequest signupRequest)
 			throws EntityAlreadyExistsException {
 		System.out.println(signupRequest);
@@ -46,7 +46,7 @@ public class UserController {
 	}
 
 	// Update User
-	@PutMapping("/")
+	@PutMapping("")
 	public ResponseEntity<CommonResponseDto<User>> updateUser(UpdateUserRequestDto updateUserRequestDto) {
 		User updatedUser = userService.updateUser(updateUserRequestDto);
 		if (updatedUser == null) {
@@ -56,6 +56,24 @@ public class UserController {
 		}
 		return ResponseEntity.ok(new CommonResponseDto<>("Users updated successfully ", HttpStatus.OK, updatedUser));
 
+	}
+
+	// Get All Users
+	@GetMapping("")
+	public ResponseEntity<CommonResponseDto<List<User>>> getAllUsers() {
+		List<User> users = userService.getAllUsers();
+		return ResponseEntity.ok(new CommonResponseDto<>("All users retrieved successfully", HttpStatus.OK, users));
+	}
+
+	// Get User By ID
+	@GetMapping("/{userId}")
+	public ResponseEntity<CommonResponseDto<User>> getUserById(@PathVariable Long userId) {
+		User user = userService.getUserById(userId);
+		if (user == null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new CommonResponseDto<>("User not found with ID: " + userId, HttpStatus.NOT_FOUND, null));
+		}
+		return ResponseEntity.ok(new CommonResponseDto<>("User retrieved successfully", HttpStatus.OK, user));
 	}
 
 	// get All User By Role
@@ -70,7 +88,7 @@ public class UserController {
 	}
 
 	// get All User By Status
-	@GetMapping("/findByStatus")
+	@GetMapping("/status")
 	public ResponseEntity<CommonResponseDto<List<User>>> getAllUserByStatus(@RequestParam String status) {
 		List<User> users = userService.getAllUsersByStatus(status);
 		if (users.isEmpty()) {
@@ -82,7 +100,7 @@ public class UserController {
 	}
 
 	// add profile pic
-	@PostMapping(value = "/{userId}/addProfilePic", consumes = "multipart/form-data")
+	@PostMapping(value = "/{userId}/profile-pic", consumes = "multipart/form-data")
 	public ResponseEntity<CommonResponseDto<User>> addProfilePic(@RequestParam("file") MultipartFile file,
 			@PathVariable Long userId) {
 		User user = userService.addProfilePic(userId, file);
@@ -96,7 +114,7 @@ public class UserController {
 
 	}
 
-	@GetMapping("/{userId}/profile-picture")
+	@GetMapping("/{userId}/profile-pic")
 	public ResponseEntity<Resource> getProfilePicture(@PathVariable Long userId) {
 		Resource profilePic = userService.getProfilePic(userId);
 
@@ -113,7 +131,7 @@ public class UserController {
 				.body(profilePic);
 	}
 
-	@PutMapping(value = "/{userId}/updateProfilePic", consumes = "multipart/form-data")
+	@PutMapping(value = "/{userId}/profile-pic", consumes = "multipart/form-data")
 	public ResponseEntity<CommonResponseDto<User>> updateProfilePic(@RequestParam("file") MultipartFile file,
 			@PathVariable Long userId) {
 		User user = userService.updateProfilePic(userId, file);
@@ -126,7 +144,7 @@ public class UserController {
 		return ResponseEntity.ok(new CommonResponseDto<>("Profile pic updated successfully.", HttpStatus.OK, null));
 	}
 
-	@DeleteMapping("/{userId}/deleteProfilePic")
+	@DeleteMapping("/{userId}/profile-pic")
 	public ResponseEntity<CommonResponseDto<User>> deleteProfilePic(@PathVariable Long userId)
 			throws BadRequestException {
 		User user = userService.deleteProfilePic(userId);
