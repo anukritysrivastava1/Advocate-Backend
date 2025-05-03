@@ -14,7 +14,7 @@ import lombok.ToString;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@ToString(exclude ={"user"})
 public class Case {
 
     @Id

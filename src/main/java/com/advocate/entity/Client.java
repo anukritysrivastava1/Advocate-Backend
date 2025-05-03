@@ -34,7 +34,9 @@ public class Client {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
+    
 
     @ManyToOne
     @JoinColumn(name = "case_id", nullable = true)
