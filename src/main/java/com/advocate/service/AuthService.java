@@ -43,20 +43,7 @@ public class AuthService {
 		newUser.setLastName(signupRequest.getLastName());
 		newUser.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
 
-		String roleType = signupRequest.getRole();
-
-		if (roleType == null || roleType.trim().isEmpty()) {
-			throw new IllegalArgumentException("Error: Role cannot be empty!");
-		}
-
-		try {
-			Role role = Role.valueOf(roleType.trim().toUpperCase());
-			System.out.println(role);
-			newUser.setRole(role);
-		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException(
-					"Error: Invalid role '" + roleType + "'. Allowed values: ADMIN, SUBADMIN, USER.");
-		}
+		newUser.setRole(Role.USER);
 
 		System.out.println(newUser);
 
