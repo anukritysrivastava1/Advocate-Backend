@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,8 +20,11 @@ import com.advocate.dto.request.SignupRequest;
 import com.advocate.dto.request.UpdateUserRequestDto;
 import com.advocate.dto.response.CommonResponseDto;
 import com.advocate.entity.User;
+import com.advocate.enums.Role;
 import com.advocate.exception.EntityAlreadyExistsException;
 import com.advocate.service.UserService;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -80,5 +84,13 @@ public class AdminController {
 		return ResponseEntity.ok(new CommonResponseDto<>("Admin deleted successfully. ", HttpStatus.OK, null));
 
 	}
+
+
+	@PutMapping("/{id}/role")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> updateUserRole(@PathVariable Long id, @RequestParam Role role) {
+        User updatedUser = userService.updateUserRole(id, role);
+        return ResponseEntity.ok("User role updated to " + updatedUser.getRole());
+    }
 
 }

@@ -54,20 +54,7 @@ public class UserService {
 		newUser.setLastName(signupRequest.getLastName());
 		newUser.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
 		System.out.println(signupRequest);
-		String roleType = signupRequest.getRole();
-		System.out.println("Role is " + roleType);
-		if (roleType == null || roleType.trim().isEmpty()) {
-			throw new IllegalArgumentException("Error: Role cannot be empty!");
-		}
-
-		try {
-			Role role = Role.valueOf(roleType.trim().toUpperCase());
-			System.out.println(role);
-			newUser.setRole(role);
-		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException(
-					"Error: Invalid role '" + roleType + "'. Allowed values: ADMIN, SUBADMIN, USER.");
-		}
+		newUser.setRole(Role.USER);
 
 		System.out.println(newUser);
 
@@ -299,4 +286,12 @@ public class UserService {
 		}
 	}
 
+
+	public User updateUserRole(Long userId, Role role) throws EntityNotFoundException {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+
+        user.setRole(role);
+        return userRepository.save(user);
+    }
 }
